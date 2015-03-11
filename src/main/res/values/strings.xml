@@ -1,12 +1,18 @@
 <resources>
     <string name="app_name">VG_V2</string>
 
-    <string name="hello_world">New Graffiti</string>
+    <string name="hello_world">Virtual Graffiti</string>
     <string name="action_settings">Settings</string>
 
-    <string name="button_camera">Camera!!!!</string>
+    <string name="button_camera">New Graffiti</string>
     <string name="image_cd_camera">Content Description Camera</string>
 
+    <string name="white">White</string>
+    <string name="yellow">Yellow</string>
+    <string name="black">Black</string>
+    <string name="cancel">Cancel</string>
+    <string name="send">Send</string>
+    <string name="new_frame">New Frame</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
