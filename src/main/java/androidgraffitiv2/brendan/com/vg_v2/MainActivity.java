@@ -44,11 +44,12 @@ public class MainActivity extends ActionBarActivity {
 
     private static String logtag = "VG2App";
     private static int TAKE_PICTURE = 1;
-    private Uri imageUri;
+    public Uri imageUri;
     private Mat imgMAT;
     private Mat imgMASK;
     private Mat imgCANNY;
     private Size ksize;
+    private String str;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,37 +90,52 @@ public class MainActivity extends ActionBarActivity {
 
         //make sure user hit OK button
         if(resultCode== Activity.RESULT_OK) {
+
             Uri selectedImage = imageUri;
+            str = selectedImage.toString();
+
             //notify other applications of your content, keeps everyone on the same page
             getContentResolver().notifyChange(selectedImage, null);
+            //ContentResolver cr = getContentResolver();
 
-            ImageView imageView = (ImageView)findViewById(R.id.image_camera);
-            ContentResolver cr = getContentResolver();
-            Bitmap bitmap;
 
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(cr,selectedImage);
+            Intent switchActivity = new Intent(this, TestActivity.class);
+            switchActivity.putExtra("selectedImage", str);
+            startActivity(switchActivity);
 
-                Utils.bitmapToMat(bitmap, imgMAT);
 
-                // Convert to greyscale via cvtColor
-                Imgproc.cvtColor(imgMAT, imgMASK, Imgproc.COLOR_RGB2GRAY);
 
-                // Blur it
-                Imgproc.blur(imgMASK, imgMASK, ksize);
+//            Bitmap bitmap;
+//
+//            try {
+//                bitmap = MediaStore.Images.Media.getBitmap(cr,selectedImage);
+//
+//                Utils.bitmapToMat(bitmap, imgMAT);
+//
+//                // Convert to greyscale via cvtColor
+//                Imgproc.cvtColor(imgMAT, imgMASK, Imgproc.COLOR_RGB2GRAY);
+//
+//                // Blur it
+//                Imgproc.blur(imgMASK, imgMASK, ksize);
+//
+//                // Canny edge detection & drawing
+//                Imgproc.Canny(imgMASK, imgCANNY, 20, 60);
+//
+//                // Show the Canny Edge detector image
+//                Utils.matToBitmap(imgCANNY, bitmap);
+//
+//
+//
+//
+//                imageView.setImageBitmap(bitmap);
+//                //Toast.makeText(MainActivity.this, selectedImage.toString(), Toast.LENGTH_LONG).show();
+//            }
+//
+//            catch(Exception e) {
+//                Log.e(logtag, e.toString());
+//            }
 
-                // Canny edge detection & drawing
-                Imgproc.Canny(imgMASK, imgCANNY, 20, 60);
 
-                // Show the Canny Edge detector image
-                Utils.matToBitmap(imgCANNY, bitmap);
-                imageView.setImageBitmap(bitmap);
-                Toast.makeText(MainActivity.this, selectedImage.toString(), Toast.LENGTH_LONG).show();
-            }
-
-            catch(Exception e) {
-                Log.e(logtag, e.toString());
-            }
 
         }
 
