@@ -17,16 +17,38 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import org.opencv.android.Utils;
+import org.opencv.android.LoaderCallbackInterface;
+
+//OpenCV Imports
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfFloat;
+import org.opencv.core.MatOfInt;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.imgproc.Imgproc;
+
+
 
 import java.io.File;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
 
 public class MainActivity extends ActionBarActivity {
 
     private static String logtag = "VG2App";
     private static int TAKE_PICTURE = 1;
     private Uri imageUri;
-
+    private Mat imgMAT;
+    private Mat imgMASK;
+    private Mat imgCANNY;
+    private Size ksize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +60,12 @@ public class MainActivity extends ActionBarActivity {
         cameraButton.setOnClickListener(cameraListener);
 
         if (!OpenCVLoader.initDebug()) {}
+
+        //OpenCV Additions
+        imgMAT = new Mat();
+        imgMASK = new Mat();
+        imgCANNY = new Mat();
+        ksize = new Size(3,3);
 
     }
 
@@ -71,6 +99,20 @@ public class MainActivity extends ActionBarActivity {
 
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(cr,selectedImage);
+
+                Utils.bitmapToMat(bitmap, imgMAT);
+
+                // Convert to greyscale via cvtColor
+                Imgproc.cvtColor(imgMAT, imgMASK, Imgproc.COLOR_RGB2GRAY);
+
+                // Blur it
+                Imgproc.blur(imgMASK, imgMASK, ksize);
+
+                // Canny edge detection & drawing
+                Imgproc.Canny(imgMASK, imgCANNY, 20, 60);
+
+                // Show the Canny Edge detector image
+                Utils.matToBitmap(imgCANNY, bitmap);
                 imageView.setImageBitmap(bitmap);
                 Toast.makeText(MainActivity.this, selectedImage.toString(), Toast.LENGTH_LONG).show();
             }
