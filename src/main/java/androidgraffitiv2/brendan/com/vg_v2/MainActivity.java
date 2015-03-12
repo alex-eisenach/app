@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
@@ -38,7 +39,6 @@ public class MainActivity extends ActionBarActivity {
     // view that was added to layout
     private DrawingView drawView;
 
-    drawView = (DrawingView)findViewById(R.id.drawing);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +56,15 @@ public class MainActivity extends ActionBarActivity {
         imgMASK = new Mat();
         imgCANNY = new Mat();
         ksize = new Size(3,3);
+
+
+        drawView = (DrawingView)findViewById(R.id.drawing);
+        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
+        //get first button and store it as instance variable
+        currPaint = (ImageButton)paintLayout.getChildAt(0);
+        //show current selected color
+        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.point_pressed));
+
 
     }
 
