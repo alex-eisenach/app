@@ -8,10 +8,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -109,4 +108,23 @@ public class TestActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void paintClicked(View view){
+        //use chosen color
+        if(view!=currPaint){
+            //update color
+            ImageButton imgView = (ImageButton)view;
+            String color = view.getTag().toString();
+
+            drawView.setColor(color);
+
+            imgView.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+            currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
+            currPaint=(ImageButton)view;
+
+
+        }
+
+    }
+
 }
