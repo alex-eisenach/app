@@ -70,18 +70,18 @@ public class DrawingView extends View {
         float touchX = event.getX();
         float touchY = event.getY();
 
-        swtich (event.getActivity()) {
-            case MotionEvent.ACTION_DOWN:
+        switch (event.getAction())  {
+        case MotionEvent.ACTION_DOWN:
                 drawPath.moveTo(touchX, touchY);
                 break;
-            case MotionEvent.ACTION_MOVE:
+        case MotionEvent.ACTION_MOVE:
                 drawPath.lineTo(touchX, touchY);
                 break;
-            case MotionEvent.ACTION_UP:
-                drawCanvas.drawPath(drawPath, drawPath);
+        case MotionEvent.ACTION_UP:
+                drawCanvas.drawPath(drawPath, drawPaint);
                 drawPath.reset();
                 break;
-            default:
+        default:
                 return false;
         }
 
