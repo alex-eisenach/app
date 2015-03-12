@@ -2,7 +2,10 @@ package androidgraffitiv2.brendan.com.vg_v2;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.graphics.Canvas;
+import android.content.Context;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -28,15 +33,21 @@ public class TestActivity extends Activity {
     public Bitmap bitmap;
     private Bundle extras;
     private ImageButton currPaint;
+    private Canvas picCanvas;
+    private Drawable picDrawable;
+    private Context instance;
 
     //represents the instance on custom
     // view that was added to layout
     private DrawingView drawView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+
+        TestActivity actinstance = new TestActivity();
 
         Bundle extras = new Bundle();
 
@@ -64,7 +75,6 @@ public class TestActivity extends Activity {
         ksize = new Size(3, 3);
 
 
-
         try {
             bitmap = MediaStore.Images.Media.getBitmap(cr, pathUri);
         } catch (IOException e) {
@@ -77,7 +87,14 @@ public class TestActivity extends Activity {
         //imageView.setImageBitmap(bitmap);
         //Toast.makeText(this, pathUri.toString(), Toast.LENGTH_LONG).show();
 
+
+
+        picDrawable = new BitmapDrawable(this.getResources(), bitmap);
+
         drawView = (DrawingView)findViewById(R.id.drawing);
+
+        drawView.setBackground(picDrawable);
+
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
         //get first button and store it as instance variable
         currPaint = (ImageButton)paintLayout.getChildAt(0);
