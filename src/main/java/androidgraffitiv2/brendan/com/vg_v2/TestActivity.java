@@ -72,11 +72,11 @@ public class TestActivity extends Activity {
             e.printStackTrace();
         }
 
-        ImageView imageView = (ImageView) findViewById(R.id.image_camera);
+        //ImageView imageView = (ImageView) findViewById(R.id.image_camera);
 
 
-        imageView.setImageBitmap(bitmap);
-        Toast.makeText(this, pathUri.toString(), Toast.LENGTH_LONG).show();
+        //imageView.setImageBitmap(bitmap);
+        //Toast.makeText(this, pathUri.toString(), Toast.LENGTH_LONG).show();
 
         drawView = (DrawingView)findViewById(R.id.drawing);
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);

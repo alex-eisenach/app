@@ -58,13 +58,6 @@ public class MainActivity extends ActionBarActivity {
         ksize = new Size(3,3);
 
 
-        drawView = (DrawingView)findViewById(R.id.drawing);
-        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
-        //get first button and store it as instance variable
-        currPaint = (ImageButton)paintLayout.getChildAt(0);
-        //show current selected color
-        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.point_pressed));
-
 
     }
 
