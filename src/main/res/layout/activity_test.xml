@@ -135,15 +135,17 @@
 
         <!-- Top Row -->
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
             android:orientation="horizontal"
             android:id="@+id/paint_colors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
         </LinearLayout>
         <!-- Bottom Row -->
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
             <ImageButton

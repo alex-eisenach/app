@@ -4,35 +4,19 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.provider.SyncStateContract;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.util.Log;
 
-import org.opencv.android.Utils;
-import org.opencv.imgproc.Imgproc;
-
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
-import java.net.URI;
 
 
 public class TestActivity extends Activity {
@@ -44,7 +28,11 @@ public class TestActivity extends Activity {
     private Size ksize;
     public Bitmap bitmap;
     private Bundle extras;
+    private ImageButton currPaint;
 
+    //represents the instance on custom
+    // view that was added to layout
+    private DrawingView drawView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +77,14 @@ public class TestActivity extends Activity {
 
         imageView.setImageBitmap(bitmap);
         Toast.makeText(this, pathUri.toString(), Toast.LENGTH_LONG).show();
+
+        drawView = (DrawingView)findViewById(R.id.drawing);
+        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
+        //get first button and store it as instance variable
+        currPaint = (ImageButton)paintLayout.getChildAt(0);
+        //show current selected color
+        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+
 
     }
 
