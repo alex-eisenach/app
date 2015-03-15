@@ -1,9 +1,12 @@
 package androidgraffitiv2.brendan.com.vg_v2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
-import android.content.res.Resources;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -12,18 +15,21 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.graphics.Canvas;
-import android.content.Context;
+import android.widget.Toast;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 import java.io.IOException;
+import java.util.UUID;
+
+//added for button functionality
 
 
-public class TestActivity extends Activity {
+public class TestActivity extends Activity implements OnClickListener{
 
     //public Uri imageUri;
     private Mat imgMAT;
@@ -36,6 +42,8 @@ public class TestActivity extends Activity {
     private Canvas picCanvas;
     private Drawable picDrawable;
     private Context instance;
+    private float smallBrush, mediumBrush, largeBrush;
+    private ImageButton drawBtn, eraseBtn, newBtn, saveBtn;
 
     //represents the instance on custom
     // view that was added to layout
@@ -101,6 +109,9 @@ public class TestActivity extends Activity {
         //show current selected color
         currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
 
+        saveBtn = (ImageButton)findViewById(R.id.save_btn);
+        saveBtn.setOnClickListener(this);
+
 
     }
 
@@ -124,6 +135,54 @@ public class TestActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view){
+        //respond to clicks
+        drawView.setDrawingCacheEnabled(true);
+        if(view.getId()==R.id.draw_btn){
+            //draw button clicked
+        }
+
+        else if(view.getId()==R.id.save_btn){
+            //save drawing
+            AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
+            saveDialog.setTitle("Save drawing");
+            saveDialog.setMessage("Save drawing to device Gallery?");
+            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    //save drawing
+                }
+            });
+            saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.cancel();
+                }
+            });
+            saveDialog.show();
+
+            //write image to a file
+            //insertImage method to attempt to write the image to the media
+            // store for images on the device, which should save it to the user gallery
+            String imgSaved = MediaStore.Images.Media.insertImage(
+                    getContentResolver(), drawView.getDrawingCache(),
+                    UUID.randomUUID().toString()+".png", "drawing");
+
+            if(imgSaved!=null){
+                Toast savedToast = Toast.makeText(getApplicationContext(),
+                        "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+                savedToast.show();
+            }
+            else{
+                Toast unsavedToast = Toast.makeText(getApplicationContext(),
+                        "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
+                unsavedToast.show();
+            }
+
+            drawView.destroyDrawingCache();
+
+        }
     }
 
     public void paintClicked(View view){
