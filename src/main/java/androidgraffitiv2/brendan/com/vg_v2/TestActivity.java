@@ -101,13 +101,15 @@ public class TestActivity extends Activity implements OnClickListener{
 
         drawView = (DrawingView)findViewById(R.id.drawing);
 
-        drawView.setBackground(picDrawable);
+
 
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
         //get first button and store it as instance variable
         currPaint = (ImageButton)paintLayout.getChildAt(0);
         //show current selected color
         currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+
+        drawView.setBackground(picDrawable);
 
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
@@ -165,6 +167,7 @@ public class TestActivity extends Activity implements OnClickListener{
             //write image to a file
             //insertImage method to attempt to write the image to the media
             // store for images on the device, which should save it to the user gallery
+            drawView.setBackground(null);
             String imgSaved = MediaStore.Images.Media.insertImage(
                     getContentResolver(), drawView.getDrawingCache(),
                     UUID.randomUUID().toString()+".png", "drawing");

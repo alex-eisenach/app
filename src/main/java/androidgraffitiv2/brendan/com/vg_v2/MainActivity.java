@@ -46,8 +46,10 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         Button cameraButton = (Button)findViewById(R.id.button_camera);
+        Button opencvButton = (Button)findViewById(R.id.opencv_btn);
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
+        opencvButton.setOnClickListener(opencvListener);
 
         if (!OpenCVLoader.initDebug()) {}
 
@@ -64,6 +66,12 @@ public class MainActivity extends ActionBarActivity {
     private OnClickListener cameraListener = new OnClickListener () {
         public void onClick(View v) {
             takePhoto(v);            //takes in view v
+        }
+    };
+
+    private OnClickListener opencvListener = new OnClickListener () {
+        public void onClick (View v) {
+            Intent opencvSwitcher = new Intent();
         }
     };
 
