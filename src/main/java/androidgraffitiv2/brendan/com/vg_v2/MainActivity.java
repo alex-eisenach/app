@@ -1,7 +1,9 @@
 package androidgraffitiv2.brendan.com.vg_v2;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,12 +16,17 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.graphics.Bitmap;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 //OpenCV Imports
 
@@ -28,16 +35,20 @@ public class MainActivity extends ActionBarActivity {
     private static String logtag = "VG2App";
     private static int TAKE_PICTURE = 1;
     public Uri imageUri;
+    public Uri chosenImageUri;
     private Mat imgMAT;
     private Mat imgMASK;
     private Mat imgCANNY;
     private Size ksize;
     private String str;
     private ImageButton currPaint;
+    private Bitmap bitmap;
 
     //represents the instance on custom
     // view that was added to layout
     private DrawingView drawView;
+
+    static final int RES_CODE_SWITCHER = 99;
 
 
     @Override
@@ -49,7 +60,7 @@ public class MainActivity extends ActionBarActivity {
         Button opencvButton = (Button)findViewById(R.id.opencv_btn);
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
-        opencvButton.setOnClickListener(opencvListener);
+        opencvButton.setOnClickListener(galleryListener);
 
         if (!OpenCVLoader.initDebug()) {}
 
@@ -59,8 +70,6 @@ public class MainActivity extends ActionBarActivity {
         imgCANNY = new Mat();
         ksize = new Size(3,3);
 
-
-
     }
 
     private OnClickListener cameraListener = new OnClickListener () {
@@ -69,9 +78,16 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 
-    private OnClickListener opencvListener = new OnClickListener () {
+    private OnClickListener galleryListener = new OnClickListener () {
         public void onClick (View v) {
-            Intent opencvSwitcher = new Intent();
+            Intent gallerySwitcher = new Intent();
+            gallerySwitcher.setType("image/*");
+            gallerySwitcher.setAction(Intent.ACTION_GET_CONTENT);
+            gallerySwitcher.addCategory(Intent.CATEGORY_OPENABLE);
+            File chosenPhoto = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"picture.jpg");
+            chosenImageUri = Uri.fromFile(chosenPhoto);
+            gallerySwitcher.putExtra(MediaStore.EXTRA_OUTPUT, chosenImageUri);
+            startActivityForResult(gallerySwitcher, RES_CODE_SWITCHER);
         }
     };
 
@@ -88,7 +104,7 @@ public class MainActivity extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, intent);
 
         //make sure user hit OK button
-        if(resultCode== Activity.RESULT_OK) {
+        if(resultCode== Activity.RESULT_OK && requestCode == TAKE_PICTURE) {
 
             Uri selectedImage = imageUri;
             str = selectedImage.toString();
@@ -138,6 +154,38 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
+        if (requestCode == RES_CODE_SWITCHER && resultCode == Activity.RESULT_OK) {
+
+           try {
+               if (bitmap != null) {
+                   bitmap.recycle();
+               }
+
+               InputStream stream = getContentResolver().openInputStream(intent.getData());
+               bitmap = BitmapFactory.decodeStream(stream);
+               stream.close();
+               Uri chosenImage = getImageUri(this, bitmap);
+               str = chosenImage.toString();
+               getContentResolver().notifyChange(chosenImage, null);
+
+
+           } catch (FileNotFoundException e) {
+               e.printStackTrace();
+
+           } catch (IOException err) {
+               err.printStackTrace();
+           }
+
+            Intent switchActivity = new Intent(this, TestActivity.class);
+            switchActivity.putExtra("selectedImage", str);
+            startActivity(switchActivity);
+
+
+        super.onActivityResult(requestCode, resultCode, intent);
+
+
+        }
+
     }
 
     @Override
@@ -160,5 +208,12 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 }
