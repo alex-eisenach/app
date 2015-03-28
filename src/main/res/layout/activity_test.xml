@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="#FFCCCCCC"
     android:orientation="vertical"
-    tools:context="androidgraffitiv2.brendan.com.vg_v2.TestActivity">
+    tools:context="androidgraffitiv2.brendan.com.tagd.TestActivity">
 
 
     <LinearLayout
@@ -47,7 +47,7 @@
 
     </LinearLayout>
 
-    <androidgraffitiv2.brendan.com.vg_v2.DrawingView
+    <androidgraffitiv2.brendan.com.tagd.DrawingView
         android:id="@+id/drawing"
         android:layout_width="fill_parent"
         android:layout_height="0dp"

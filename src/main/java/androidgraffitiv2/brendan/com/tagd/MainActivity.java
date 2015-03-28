@@ -1,22 +1,30 @@
-package androidgraffitiv2.brendan.com.vg_v2;
+package androidgraffitiv2.brendan.com.tagd;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.graphics.Bitmap;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
@@ -24,13 +32,12 @@ import org.opencv.core.Size;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
-//OpenCV Imports
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends FragmentActivity {
 
     private static String logtag = "VG2App";
     private static int TAKE_PICTURE = 1;
@@ -50,6 +57,8 @@ public class MainActivity extends ActionBarActivity {
 
     static final int RES_CODE_SWITCHER = 99;
 
+    private static final int GPS_ERRORDIALOG_REQUEST = 9001;
+    GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +79,62 @@ public class MainActivity extends ActionBarActivity {
         imgCANNY = new Mat();
         ksize = new Size(3,3);
 
+        if (servicesOK()){
+            //fragment of map
+            //setContentView(R.layout.map_activity);
+
+            if (initMap()){
+                Toast.makeText(this, "Ready to map!", Toast.LENGTH_SHORT).show();
+                //gotoLocation(BOULDER_LAT, BOULDER_LNG, DEFAULTZOOM);
+                mMap.setMyLocationEnabled(true);
+
+            }
+            else {
+                Toast.makeText(this, "Map not available!", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        else {
+            setContentView(R.layout.activity_main);
+        }
+
+    }
+
+    //Testing Google Play Services for map
+    public boolean servicesOK(){
+        int isAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
+        if (isAvailable == ConnectionResult.SUCCESS){
+            return true;
+        }
+
+        else if (GooglePlayServicesUtil.isUserRecoverableError(isAvailable)){
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(isAvailable, this, GPS_ERRORDIALOG_REQUEST);
+            dialog.show();
+        }
+
+        else {
+            Toast.makeText(this, "Can't connect to Google Play Services", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+
+    }
+
+    private boolean initMap(){
+        if (mMap == null){
+            SupportMapFragment mapFrag =
+                    (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            mMap = mapFrag.getMap();
+        }
+        return (mMap != null);
+    }
+
+
+    //adding markers
+    public void onMapReady(GoogleMap map) {
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(10, -10))
+                .title("Hello world"));
     }
 
     private OnClickListener cameraListener = new OnClickListener () {
@@ -118,8 +183,6 @@ public class MainActivity extends ActionBarActivity {
             switchActivity.putExtra("selectedImage", str);
             startActivity(switchActivity);
 
-
-
 //            Bitmap bitmap;
 //
 //            try {
@@ -149,8 +212,6 @@ public class MainActivity extends ActionBarActivity {
 //            catch(Exception e) {
 //                Log.e(logtag, e.toString());
 //            }
-
-
 
         }
 
@@ -187,6 +248,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
