@@ -23,8 +23,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.googlecode.flickrjandroid.Transport;
+import com.googlecode.flickrjandroid.photos.geo.GeoInterface;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
@@ -50,6 +53,17 @@ public class MainActivity extends FragmentActivity {
     private String str;
     private ImageButton currPaint;
     private Bitmap bitmap;
+    private String latStr;
+    private String lonStr;
+    private Float latFloat;
+    private Float lonFloat;
+    private GeoInterface geoInterface;
+
+    private String apiKey = "1ae9506f05e76f22f7e7d89b5277cd75";
+    //jsonLint
+    //https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key=1ae9506f05e76f22f7e7d89b5277cd75&user_id=132191189@N03&format=json&nojsoncallback=1
+    private String sharedSecret = "30540280f392b674";
+    private Transport transport;
 
     //represents the instance on custom
     // view that was added to layout
@@ -87,6 +101,7 @@ public class MainActivity extends FragmentActivity {
                 Toast.makeText(this, "Ready to map!", Toast.LENGTH_SHORT).show();
                 //gotoLocation(BOULDER_LAT, BOULDER_LNG, DEFAULTZOOM);
                 mMap.setMyLocationEnabled(true);
+                onMapReady(mMap);
 
             }
             else {
@@ -133,8 +148,17 @@ public class MainActivity extends FragmentActivity {
     //adding markers
     public void onMapReady(GoogleMap map) {
         map.addMarker(new MarkerOptions()
-                .position(new LatLng(10, -10))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                .position(new LatLng(40.0274, -105.2519))
                 .title("Hello world"));
+
+
+  /*          map.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                    .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
+                    .position(new LatLng(latFloat, lonFloat)));*/
+
+
     }
 
     private OnClickListener cameraListener = new OnClickListener () {
@@ -278,4 +302,6 @@ public class MainActivity extends FragmentActivity {
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
+
+
 }
