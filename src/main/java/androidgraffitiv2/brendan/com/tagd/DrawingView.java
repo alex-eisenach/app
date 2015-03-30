@@ -1,4 +1,4 @@
-package androidgraffitiv2.brendan.com.vg_v2;
+package androidgraffitiv2.brendan.com.tagd;
 
 import android.content.Context;
 import android.graphics.Bitmap;

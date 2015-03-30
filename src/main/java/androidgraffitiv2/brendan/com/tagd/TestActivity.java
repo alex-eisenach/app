@@ -49,6 +49,8 @@ public class TestActivity extends Activity implements OnClickListener{
     // view that was added to layout
     private DrawingView drawView;
 
+    //CHANGE so i can upload
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

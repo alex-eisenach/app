@@ -1,4 +1,4 @@
-package androidgraffitiv2.brendan.com.vg_v2.dummy;
+package androidgraffitiv2.brendan.com.tagd.dummy;
 
 import android.view.View;
 import android.content.Context;

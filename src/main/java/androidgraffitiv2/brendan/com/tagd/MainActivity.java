@@ -90,6 +90,10 @@ public class MainActivity extends FragmentActivity {
             //fragment of map
             //setContentView(R.layout.map_activity);
 
+
+           //CHANGE so i can upload
+
+
             if (initMap()){
                 Toast.makeText(this, "Ready to map!", Toast.LENGTH_SHORT).show();
                 //gotoLocation(BOULDER_LAT, BOULDER_LNG, DEFAULTZOOM);
