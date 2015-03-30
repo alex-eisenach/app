@@ -29,7 +29,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.googlecode.flickrjandroid.Transport;
 import com.googlecode.flickrjandroid.photos.geo.GeoInterface;
 
-import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
@@ -38,6 +37,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import androidgraffitiv2.brendan.com.tagd.dummy.GetRawData;
 
 
 public class MainActivity extends FragmentActivity {
@@ -85,15 +86,7 @@ public class MainActivity extends FragmentActivity {
         cameraButton.setOnClickListener(cameraListener);
         opencvButton.setOnClickListener(galleryListener);
 
-        if (!OpenCVLoader.initDebug()) {}
-
-        //OpenCV Additions
-        imgMAT = new Mat();
-        imgMASK = new Mat();
-        imgCANNY = new Mat();
-        ksize = new Size(3,3);
-
-        if (servicesOK()){
+       if (servicesOK()){
             //fragment of map
             //setContentView(R.layout.map_activity);
 
@@ -113,6 +106,8 @@ public class MainActivity extends FragmentActivity {
             setContentView(R.layout.activity_main);
         }
 
+        GetRawData theRawData = new GetRawData("https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key=1ae9506f05e76f22f7e7d89b5277cd75&user_id=132191189@N03&format=json&nojsoncallback=1");
+        theRawData.execute();
     }
 
     //Testing Google Play Services for map
