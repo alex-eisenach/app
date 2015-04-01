@@ -38,8 +38,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import androidgraffitiv2.brendan.com.tagd.dummy.GetRawData;
-
 
 public class MainActivity extends FragmentActivity {
 
@@ -67,7 +65,7 @@ public class MainActivity extends FragmentActivity {
     private Transport transport;
 
     //represents the instance on custom
-    // view that was added to layout
+    //view that was added to layout
     private DrawingView drawView;
 
     static final int RES_CODE_SWITCHER = 99;
