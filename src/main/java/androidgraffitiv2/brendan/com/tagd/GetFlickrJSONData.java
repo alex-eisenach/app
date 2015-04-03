@@ -26,11 +26,33 @@ public class GetFlickrJSONData extends GetRawData {
         downloadJSONData.execute(mDestinationUri.toString());
     }
 
+    public GetFlickrJSONData(String searchCriteria, boolean matchAll) {
+        super(null);
+        createAndUpdateUri(searchCriteria, matchAll);
+    }
+
+    public boolean createAndUpdateUri(String searchCriteria, boolean matchAll){
+        final String FLICKR_API_BASE_URL = "    //https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key=1ae9506f05e76f22f7e7d89b5277cd75&user_id=132191189@N03&format=json&nojsoncallback=1";
+        final String PHOTO_EXTRAS = "extras";
+        /*final String NO_JSON_CALLBACK_PARAM = "nojsoncallback";
+
+        mDestinationUri = Uri.parse(FLICKR_API_BASE_URL).buildUpon()
+                .appendQueryParameter()*/
+
+        mDestinationUri = Uri.parse(FLICKR_API_BASE_URL).buildUpon()
+                .build();
+
+        return mDestinationUri != null;
+    }
+
     public void processResult() {
         if(getmDownloadStatus() != DownloadStatus.OK){
             Log.e(LOG_TAG, "Error downloading raw file");
             return;
         }
+
+
+
 
         final String FLICKR_PHOTO = "photo";
         final String FLICKR_ID = "id";
