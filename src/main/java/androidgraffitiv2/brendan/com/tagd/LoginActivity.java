@@ -3,6 +3,8 @@ package androidgraffitiv2.brendan.com.tagd;
 /**
  * Created by Brendan on 4/5/15.
  */
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -29,8 +31,8 @@ public class LoginActivity extends OAuthLoginActionBarActivity<RestClient> {
     // i.e Display application "homepage"
     @Override
     public void onLoginSuccess() {
-        //Intent i = new Intent(this, PhotosActivity.class);
-        //startActivity(i);
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
     }
 
     // OAuth authentication flow failed, handle the error

@@ -6,7 +6,7 @@ package androidgraffitiv2.brendan.com.tagd;
 import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.scribe.builder.api.Api;
@@ -40,11 +40,11 @@ public class RestClient extends OAuthBaseClient {
 
     // CHANGE THIS
     // DEFINE METHODS for different API endpoints here
-    public void getPhotoGeo(AsyncHttpResponseHandler handler) {
-        String apiUrl = getApiUrl("?nojsoncallback=1&method=flickr.photos.getWithGeoData");
+    public void getPhotoGeo(JsonHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("?nojsoncallback=1&method=flickr.people.getPublicPhotos&extras=geo");
         // Can specify query string params directly or through RequestParams.
         RequestParams params = new RequestParams();
-        params.put("format", "json");
+        //params.put("format", "json");
         getClient().get(apiUrl, params, handler);
     }
 

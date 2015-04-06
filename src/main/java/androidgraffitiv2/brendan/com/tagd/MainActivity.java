@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +29,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.googlecode.flickrjandroid.Transport;
 import com.googlecode.flickrjandroid.photos.geo.GeoInterface;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
@@ -58,6 +63,7 @@ public class MainActivity extends FragmentActivity {
     private Float lonFloat;
     private GeoInterface geoInterface;
 
+
     private String apiKey = "1ae9506f05e76f22f7e7d89b5277cd75";
     //jsonLint
     //https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key=1ae9506f05e76f22f7e7d89b5277cd75&user_id=132191189@N03&format=json&nojsoncallback=1
@@ -84,9 +90,26 @@ public class MainActivity extends FragmentActivity {
         cameraButton.setOnClickListener(cameraListener);
         opencvButton.setOnClickListener(galleryListener);
 
+        RestClient client = RestApplication.getRestClient();
+        client.getPhotoGeo(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+                // Response is automatically parsed into a JSONArray
+                // json.getJSONObject(0).getLong("id");
+
+                try {
+                    latStr = json.getJSONObject(0).getString("id");
+
+                } catch (JSONException j) {
+                    Log.i("ERROR", "error", j);
+
+                }
+            }
+        });
 
 
-       if (servicesOK()){
+
+        if (servicesOK()){
             //fragment of map
             //setContentView(R.layout.map_activity);
 
@@ -95,7 +118,8 @@ public class MainActivity extends FragmentActivity {
 
 
             if (initMap()){
-                Toast.makeText(this, "Ready to map!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Ready to map!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, latStr, Toast.LENGTH_LONG).show();
                 //gotoLocation(BOULDER_LAT, BOULDER_LNG, DEFAULTZOOM);
                 mMap.setMyLocationEnabled(true);
                 onMapReady(mMap);
@@ -110,7 +134,7 @@ public class MainActivity extends FragmentActivity {
             setContentView(R.layout.activity_main);
         }
 
-        GetRawData theRawData = new GetRawData("https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key=1ae9506f05e76f22f7e7d89b5277cd75&user_id=132191189@N03&format=json&nojsoncallback=1");
+        GetRawData theRawData = new GetRawData("https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&extras=geo&api_key=1ae9506f05e76f22f7e7d89b5277cd75&user_id=132191189@N03&format=json&nojsoncallback=1");
         theRawData.execute();
     }
 
