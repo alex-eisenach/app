@@ -21,12 +21,12 @@ import java.util.List;
 @Table(name = "items")
 public class parseJson extends Model {
     // Define table fields
-    @Column(name = "id")
-    private String id;
+    @Column(name = "photo")
+    public String photo;
     @Column(name = "latitude")
-    private  String latitude;
+    public  String latitude;
     @Column(name = "longitude")
-    private String longitude;
+    public String longitude;
 
     public parseJson() {
         super();
@@ -38,7 +38,7 @@ public class parseJson extends Model {
         super();
 
         try {
-            this.id = object.getString("id");
+            this.photo = object.getString("photo");
             this.latitude = object.getString("latitude");
             this.longitude = object.getString("longitude");
         } catch (JSONException e) {
@@ -48,7 +48,7 @@ public class parseJson extends Model {
 
     // Getters
     public String getID() {
-        return id;
+        return photo;
     }
 
     public String getLatitude() {

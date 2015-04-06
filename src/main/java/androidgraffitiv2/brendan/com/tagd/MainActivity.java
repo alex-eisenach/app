@@ -33,6 +33,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
@@ -61,7 +63,8 @@ public class MainActivity extends FragmentActivity {
     private Float latFloat;
     private Float lonFloat;
     private GeoInterface geoInterface;
-
+    public String latArray[] = new String[2];
+    public String lonArray[] = new String[2];
 
     private String apiKey = "1ae9506f05e76f22f7e7d89b5277cd75";
     //jsonLint
@@ -91,12 +94,52 @@ public class MainActivity extends FragmentActivity {
 
         RestClient client = RestApplication.getRestClient();
         client.getPhotoGeo(new JsonHttpResponseHandler() {
-            public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonArray) {
+                System.out.println(jsonArray);
                 Log.d("DEBUG", "timeline: " + jsonArray.toString());
-                // Response is automatically parsed into a JSONArray
-                // json.getJSONObject(0).getLong("id");
+                //parseJson parsedData = new parseJson(jsonArray);
+                //parsedData.getLatitude();
+                //latStr = parsedData.getLatitude();
 
+
+                try {
+                    JSONObject topObj = jsonArray.getJSONObject("photos");
+
+                    JSONArray photoArray = topObj.getJSONArray("photo");
+                    for (int i = 0; i < photoArray.length(); i++) {
+                        JSONObject photoObj = photoArray.getJSONObject(1);
+                        latStr = photoObj.getString("latitude");
+                        lonStr = photoObj.getString("longitude");
+                        latArray[i] = latStr;
+                        lonArray[i] = lonStr;
+                    }
+
+                    Log.d("latitude: ", latStr);
+                    System.out.println(latArray);
+                    System.out.println(lonArray);
+
+
+
+                    //Toast.makeText(this, latStr, Toast.LENGTH_LONG).show();
+                    //JSONObject jsonPhoto = jsonArray.getJSONObject(0);
+                    // Response is automatically parsed into a JSONArray
+                    //jsonArray.getJSONObject(0).getLong("id");
+
+                } catch (JSONException j) {
+                    Log.i("Panda", "Panda");
+                } finally {
+                    for (int i = 0; i < 2; i++) {
+                        String dummy = new String();
+                        dummy = latArray[i];
+                        Log.d("LATPANDA", dummy);
+                        //System.out.println(latStr);
+                        //System.out.println(lonStr);
+
+                    }
+                }
             }
+
         });
 
         if (servicesOK()){
@@ -107,7 +150,7 @@ public class MainActivity extends FragmentActivity {
            //CHANGE so i can upload
 
 
-            if (initMap()){
+            if (initMap()) {
                 //Toast.makeText(this, "Ready to map!", Toast.LENGTH_SHORT).show();
                 Toast.makeText(this, latStr, Toast.LENGTH_LONG).show();
                 //gotoLocation(BOULDER_LAT, BOULDER_LNG, DEFAULTZOOM);

@@ -51,9 +51,6 @@ public class GetFlickrJSONData extends GetRawData {
             return;
         }
 
-
-
-
         final String FLICKR_PHOTO = "photo";
         final String FLICKR_ID = "id";
 

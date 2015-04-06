@@ -3,6 +3,7 @@ package androidgraffitiv2.brendan.com.tagd;
 /**
  * Created by Brendan on 4/5/15.
  */
+
 import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
@@ -41,7 +42,7 @@ public class RestClient extends OAuthBaseClient {
     // CHANGE THIS
     // DEFINE METHODS for different API endpoints here
     public void getPhotoGeo(JsonHttpResponseHandler handler) {
-        String apiUrl = getApiUrl("?method=flickr.people.getPublicPhotos&extras=geo&format=json&nojsoncallback=1");
+        String apiUrl = getApiUrl("?method=flickr.people.getPublicPhotos&extras=geo&user_id=132191189@N03&format=json&nojsoncallback=1");
         // Can specify query string params directly or through RequestParams.
         RequestParams params = new RequestParams();
         //params.put("format", "json");
