@@ -27,7 +27,7 @@ import org.scribe.builder.api.FlickrApi;
 public class RestClient extends OAuthBaseClient {
 
     public static final Class<? extends Api> REST_API_CLASS = FlickrApi.class; // Change this
-    public static final String REST_URL = "http://api.flickr.com/services/rest"; // Change this, base API URL
+    public static final String REST_URL = "https://api.flickr.com/services/rest/"; // Change this, base API URL
     public static final String REST_CONSUMER_KEY = "1ae9506f05e76f22f7e7d89b5277cd75";       // Change this
     public static final String REST_CONSUMER_SECRET = "30540280f392b674"; // Change this
     public static final String REST_CALLBACK_URL = "oauth://tagd"; // Change this (here and in manifest)
@@ -41,7 +41,7 @@ public class RestClient extends OAuthBaseClient {
     // CHANGE THIS
     // DEFINE METHODS for different API endpoints here
     public void getPhotoGeo(JsonHttpResponseHandler handler) {
-        String apiUrl = getApiUrl("?nojsoncallback=1&method=flickr.people.getPublicPhotos&extras=geo");
+        String apiUrl = getApiUrl("?method=flickr.people.getPublicPhotos&extras=geo&format=json&nojsoncallback=1");
         // Can specify query string params directly or through RequestParams.
         RequestParams params = new RequestParams();
         //params.put("format", "json");

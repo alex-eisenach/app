@@ -33,7 +33,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
@@ -92,22 +91,13 @@ public class MainActivity extends FragmentActivity {
 
         RestClient client = RestApplication.getRestClient();
         client.getPhotoGeo(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+            public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
+                Log.d("DEBUG", "timeline: " + jsonArray.toString());
                 // Response is automatically parsed into a JSONArray
                 // json.getJSONObject(0).getLong("id");
 
-                try {
-                    latStr = json.getJSONObject(0).getString("id");
-
-                } catch (JSONException j) {
-                    Log.i("ERROR", "error", j);
-
-                }
             }
         });
-
-
 
         if (servicesOK()){
             //fragment of map
