@@ -3,6 +3,7 @@
 
     <string name="hello_world">Virtual Graffiti</string>
     <string name="action_settings">Settings</string>
+    <string name="login_label">Log in</string>
 
     <string name="button_camera">New Graffiti</string>
     <string name="image_cd_camera">Content Description Camera</string>

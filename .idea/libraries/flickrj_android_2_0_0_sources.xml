@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="flickrj-android-2.0.0-sources">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/flickrj-android-2.0.0-sources.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

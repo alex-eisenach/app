@@ -84,6 +84,8 @@ public class MainActivity extends FragmentActivity {
         cameraButton.setOnClickListener(cameraListener);
         opencvButton.setOnClickListener(galleryListener);
 
+
+
        if (servicesOK()){
             //fragment of map
             //setContentView(R.layout.map_activity);
