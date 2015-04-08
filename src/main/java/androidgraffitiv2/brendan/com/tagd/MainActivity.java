@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.activeandroid.query.Select;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.googlecode.flickrjandroid.Transport;
+import com.googlecode.flickrjandroid.photos.GeoData;
 import com.googlecode.flickrjandroid.photos.geo.GeoInterface;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -43,6 +46,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends FragmentActivity {
@@ -58,13 +63,19 @@ public class MainActivity extends FragmentActivity {
     private String str;
     private ImageButton currPaint;
     private Bitmap bitmap;
-    private String latStr;
-    private String lonStr;
+    public String latStr;
+    public String lonStr;
     private Float latFloat;
     private Float lonFloat;
     private GeoInterface geoInterface;
-    public String latArray[] = new String[2];
-    public String lonArray[] = new String[2];
+    public ArrayList<parseJson> geoData;
+
+    public List<String> latArray = new ArrayList<String>();
+    public List<String> lonArray = new ArrayList<String>();
+
+    public final static int LAT_TAG = 0;
+    public final static int LON_TAG = 1;
+    public final static int ID_TAG = 2;
 
     private String apiKey = "1ae9506f05e76f22f7e7d89b5277cd75";
     //jsonLint
@@ -86,113 +97,56 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button cameraButton = (Button)findViewById(R.id.button_camera);
-        Button opencvButton = (Button)findViewById(R.id.opencv_btn);
+        Button cameraButton = (Button) findViewById(R.id.button_camera);
+        Button opencvButton = (Button) findViewById(R.id.opencv_btn);
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
         opencvButton.setOnClickListener(galleryListener);
 
-        RestClient client = RestApplication.getRestClient();
-        client.getPhotoGeo(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonArray) {
-                System.out.println(jsonArray);
-                Log.d("DEBUG", "timeline: " + jsonArray.toString());
-                //parseJson parsedData = new parseJson(jsonArray);
-                //parsedData.getLatitude();
-                //latStr = parsedData.getLatitude();
 
-
-                try {
-                    JSONObject topObj = jsonArray.getJSONObject("photos");
-
-                    JSONArray photoArray = topObj.getJSONArray("photo");
-                    for (int i = 0; i < photoArray.length(); i++) {
-                        JSONObject photoObj = photoArray.getJSONObject(1);
-                        latStr = photoObj.getString("latitude");
-                        lonStr = photoObj.getString("longitude");
-                        latArray[i] = latStr;
-                        lonArray[i] = lonStr;
-                    }
-
-                    Log.d("latitude: ", latStr);
-                    System.out.println(latArray);
-                    System.out.println(lonArray);
-
-
-
-                    //Toast.makeText(this, latStr, Toast.LENGTH_LONG).show();
-                    //JSONObject jsonPhoto = jsonArray.getJSONObject(0);
-                    // Response is automatically parsed into a JSONArray
-                    //jsonArray.getJSONObject(0).getLong("id");
-
-                } catch (JSONException j) {
-                    Log.i("Panda", "Panda");
-                } finally {
-                    for (int i = 0; i < 2; i++) {
-                        String dummy = new String();
-                        dummy = latArray[i];
-                        Log.d("LATPANDA", dummy);
-                        //System.out.println(latStr);
-                        //System.out.println(lonStr);
-
-                    }
-                }
-            }
-
-        });
-
-        if (servicesOK()){
+        if (servicesOK()) {
             //fragment of map
             //setContentView(R.layout.map_activity);
 
 
-           //CHANGE so i can upload
+            //CHANGE so i can upload
 
 
             if (initMap()) {
                 //Toast.makeText(this, "Ready to map!", Toast.LENGTH_SHORT).show();
-                Toast.makeText(this, latStr, Toast.LENGTH_LONG).show();
+
                 //gotoLocation(BOULDER_LAT, BOULDER_LNG, DEFAULTZOOM);
                 mMap.setMyLocationEnabled(true);
                 onMapReady(mMap);
 
-            }
-            else {
-                Toast.makeText(this, "Map not available!", Toast.LENGTH_SHORT).show();
+            } else {
+                //Toast.makeText(this, "Map not available!", Toast.LENGTH_SHORT).show();
             }
 
-        }
-        else {
+        } else {
             setContentView(R.layout.activity_main);
         }
 
-        GetRawData theRawData = new GetRawData("https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&extras=geo&api_key=1ae9506f05e76f22f7e7d89b5277cd75&user_id=132191189@N03&format=json&nojsoncallback=1");
-        theRawData.execute();
     }
 
     //Testing Google Play Services for map
-    public boolean servicesOK(){
+    public boolean servicesOK() {
         int isAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 
-        if (isAvailable == ConnectionResult.SUCCESS){
+        if (isAvailable == ConnectionResult.SUCCESS) {
             return true;
-        }
-
-        else if (GooglePlayServicesUtil.isUserRecoverableError(isAvailable)){
+        } else if (GooglePlayServicesUtil.isUserRecoverableError(isAvailable)) {
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(isAvailable, this, GPS_ERRORDIALOG_REQUEST);
             dialog.show();
-        }
-
-        else {
+        } else {
             Toast.makeText(this, "Can't connect to Google Play Services", Toast.LENGTH_SHORT).show();
         }
         return false;
 
     }
 
-    private boolean initMap(){
-        if (mMap == null){
+    private boolean initMap() {
+        if (mMap == null) {
             SupportMapFragment mapFrag =
                     (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             mMap = mapFrag.getMap();
@@ -203,40 +157,63 @@ public class MainActivity extends FragmentActivity {
 
     //adding markers
     public void onMapReady(GoogleMap map) {
+
+        authRequest();
+
+        //call prefHandler to grab the data from the Flickr pulldown
+        ArrayList<String> latData = prefHandler(LAT_TAG);
+        ArrayList<String> lonData = prefHandler(LON_TAG);
+        ArrayList<String> idData = prefHandler(ID_TAG);
+
+        //printouts for test
+        System.out.println("latData for DropPins:  " + latData);
+        System.out.println("lonData for DropPins:  " + lonData);
+        System.out.println("idData for DropPins:  " + idData);
+
+
+        // Drop some markers
         map.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
                 .position(new LatLng(40.0274, -105.2519))
                 .title("Hello world"));
 
+        // Loop & drop pins like dey hot
+        for (int i = 0; i < idData.size(); i++) {
 
-  /*          map.addMarker(new MarkerOptions()
+            double latDouble = Double.valueOf(latData.get(i));
+            double lonDouble = Double.valueOf(lonData.get(i));
+            double idDouble = Double.valueOf(idData.get(i));
+
+            map.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                    .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
-                    .position(new LatLng(latFloat, lonFloat)));*/
+                    .position(new LatLng(latDouble, lonDouble))
+                    .title("ID: " + String.valueOf(idDouble)));
+
+        }
 
 
     }
 
-    private OnClickListener cameraListener = new OnClickListener () {
+    private OnClickListener cameraListener = new OnClickListener() {
         public void onClick(View v) {
             takePhoto(v);            //takes in view v
         }
     };
 
-    private OnClickListener galleryListener = new OnClickListener () {
-        public void onClick (View v) {
+    private OnClickListener galleryListener = new OnClickListener() {
+        public void onClick(View v) {
             Intent gallerySwitcher = new Intent();
             gallerySwitcher.setType("image/*");
             gallerySwitcher.setAction(Intent.ACTION_GET_CONTENT);
             gallerySwitcher.addCategory(Intent.CATEGORY_OPENABLE);
-            File chosenPhoto = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"picture.jpg");
+            File chosenPhoto = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "picture.jpg");
             chosenImageUri = Uri.fromFile(chosenPhoto);
             gallerySwitcher.putExtra(MediaStore.EXTRA_OUTPUT, chosenImageUri);
             startActivityForResult(gallerySwitcher, RES_CODE_SWITCHER);
         }
     };
 
-    private void takePhoto(View v){
+    private void takePhoto(View v) {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "picture.jpg");
         imageUri = Uri.fromFile(photo);
@@ -249,7 +226,7 @@ public class MainActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, intent);
 
         //make sure user hit OK button
-        if(resultCode== Activity.RESULT_OK && requestCode == TAKE_PICTURE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == TAKE_PICTURE) {
 
             Uri selectedImage = imageUri;
             str = selectedImage.toString();
@@ -263,66 +240,36 @@ public class MainActivity extends FragmentActivity {
             switchActivity.putExtra("selectedImage", str);
             startActivity(switchActivity);
 
-//            Bitmap bitmap;
-//
-//            try {
-//                bitmap = MediaStore.Images.Media.getBitmap(cr,selectedImage);
-//
-//                Utils.bitmapToMat(bitmap, imgMAT);
-//
-//                // Convert to greyscale via cvtColor
-//                Imgproc.cvtColor(imgMAT, imgMASK, Imgproc.COLOR_RGB2GRAY);
-//
-//                // Blur it
-//                Imgproc.blur(imgMASK, imgMASK, ksize);
-//
-//                // Canny edge detection & drawing
-//                Imgproc.Canny(imgMASK, imgCANNY, 20, 60);
-//
-//                // Show the Canny Edge detector image
-//                Utils.matToBitmap(imgCANNY, bitmap);
-//
-//
-//
-//
-//                imageView.setImageBitmap(bitmap);
-//                //Toast.makeText(MainActivity.this, selectedImage.toString(), Toast.LENGTH_LONG).show();
-//            }
-//
-//            catch(Exception e) {
-//                Log.e(logtag, e.toString());
-//            }
-
         }
 
         if (requestCode == RES_CODE_SWITCHER && resultCode == Activity.RESULT_OK) {
 
-           try {
-               if (bitmap != null) {
-                   bitmap.recycle();
-               }
+            try {
+                if (bitmap != null) {
+                    bitmap.recycle();
+                }
 
-               InputStream stream = getContentResolver().openInputStream(intent.getData());
-               bitmap = BitmapFactory.decodeStream(stream);
-               stream.close();
-               Uri chosenImage = getImageUri(this, bitmap);
-               str = chosenImage.toString();
-               getContentResolver().notifyChange(chosenImage, null);
+                InputStream stream = getContentResolver().openInputStream(intent.getData());
+                bitmap = BitmapFactory.decodeStream(stream);
+                stream.close();
+                Uri chosenImage = getImageUri(this, bitmap);
+                str = chosenImage.toString();
+                getContentResolver().notifyChange(chosenImage, null);
 
 
-           } catch (FileNotFoundException e) {
-               e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
 
-           } catch (IOException err) {
-               err.printStackTrace();
-           }
+            } catch (IOException err) {
+                err.printStackTrace();
+            }
 
             Intent switchActivity = new Intent(this, TestActivity.class);
             switchActivity.putExtra("selectedImage", str);
             startActivity(switchActivity);
 
 
-        super.onActivityResult(requestCode, resultCode, intent);
+            super.onActivityResult(requestCode, resultCode, intent);
 
 
         }
@@ -359,5 +306,97 @@ public class MainActivity extends FragmentActivity {
         return Uri.parse(path);
     }
 
+    public void authRequest() {
+        RestClient client = RestApplication.getRestClient();
+        client.getPhotoGeo(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonArray) {
+                System.out.println(jsonArray);
+                Log.d("DEBUG", "timeline: " + jsonArray.toString());
+
+
+                try {
+
+                    //Code to filter through the levels of objects & arrays in raw flickr data
+                    JSONObject topObj = jsonArray.getJSONObject("photos");
+                    JSONArray photoArray = topObj.getJSONArray("photo");
+
+                    //Printouts for debugging
+                    System.out.println("tobObj raw printout:  " + topObj);
+                    System.out.println("photoArray raw printout:  " + photoArray);
+                    System.out.println("photoArray printout:  " + photoArray.getJSONObject(1));
+                    System.out.println("photoArray latitutde printout:  " + photoArray.getJSONObject(1).getString("latitude"));
+                    System.out.println("photoArray Length:  " + photoArray.length());
+
+                    //Build the geoData object
+                    geoData = parseJson.fromJson(photoArray);
+
+                    //Set up the shared preferences stuff
+                    SharedPreferences mSettings = getPreferences(MODE_PRIVATE);
+                    SharedPreferences.Editor editor = mSettings.edit();
+
+                    //Record length of the array so end-user knows how many pictures are coming in
+                    editor.putInt("arrayLength", photoArray.length());
+
+                    //Loop to dump relevant data into the sharedpref's - all in one commit/apply
+                    for (int i=0; i<photoArray.length(); i++) {
+                        editor.putString("lat"+String.valueOf(i), geoData.get(i).getLatitude());
+                        editor.putString("lon"+String.valueOf(i), geoData.get(i).getLongitude());
+                        editor.putString("id"+String.valueOf(i), geoData.get(i).getID());
+                    }
+
+                    editor.apply();
+
+                    System.out.println("geoData:  " + geoData.get(1).getID());
+
+
+                } catch (JSONException j) {
+                    Log.i("Panda", "Panda");
+                }
+
+
+            }
+
+        });
+
+        //Endpoint stuff to prototype sharedpref functionality
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        String strSaved = sharedPreferences.getString("id0", "");
+        System.out.println("SAVER:  " + strSaved);
+        Toast.makeText(this, strSaved, Toast.LENGTH_LONG).show();
+
+    }
+
+    public ArrayList<String> prefHandler(int dataselector) {
+
+        //declare the output arraylist
+        ArrayList<String> latHolder = new ArrayList<>();
+        ArrayList<String> lonHolder = new ArrayList<>();
+        ArrayList<String> idHolder = new ArrayList<>();
+
+        //sharedpref stuff
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        //retrieve the number of pictures coming in for data
+        int numPics = sharedPreferences.getInt("arrayLength", 0);
+        //loop to store the sharedpref stuff into array
+        for (int i = 0; i < numPics; i++) {
+            //populate lat/lon/id holder arrays from shared preferences in a loop
+            latHolder.add(i, sharedPreferences.getString("lat" + String.valueOf(i), ""));
+            lonHolder.add(i, sharedPreferences.getString("lon" + String.valueOf(i), ""));
+            idHolder.add(i, sharedPreferences.getString("id" + String.valueOf(i), ""));
+        }
+
+        if (dataselector == LAT_TAG) {
+            return latHolder;
+        }
+        if (dataselector == LON_TAG) {
+            return lonHolder;
+        }
+        if (dataselector == ID_TAG) {
+            return idHolder;
+        } else {
+            return null;
+        }
+    }
 
 }

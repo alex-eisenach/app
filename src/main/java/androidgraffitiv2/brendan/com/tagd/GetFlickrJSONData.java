@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 /**
@@ -53,6 +54,8 @@ public class GetFlickrJSONData extends GetRawData {
 
         final String FLICKR_PHOTO = "photo";
         final String FLICKR_ID = "id";
+        //Array latArray = new Array();
+        //Array lonArray = new Array();
 
         try {
             JSONObject jsonData = new JSONObject();

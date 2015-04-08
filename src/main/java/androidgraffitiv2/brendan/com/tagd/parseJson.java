@@ -4,6 +4,7 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
+import com.googlecode.flickrjandroid.groups.Category;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,15 +19,15 @@ import java.util.List;
  * https://github.com/pardom/ActiveAndroid/wiki/Creating-your-database-model
  * 
  */
-@Table(name = "items")
+@Table(name = "Items")
 public class parseJson extends Model {
     // Define table fields
-    @Column(name = "photo")
-    public String photo;
+    @Column(name = "id")
+    String id;
     @Column(name = "latitude")
-    public  String latitude;
+    String latitude;
     @Column(name = "longitude")
-    public String longitude;
+    String longitude;
 
     public parseJson() {
         super();
@@ -38,9 +39,10 @@ public class parseJson extends Model {
         super();
 
         try {
-            this.photo = object.getString("photo");
+            //this.photo = object.getString("id");
             this.latitude = object.getString("latitude");
             this.longitude = object.getString("longitude");
+            this.id = object.getString("id");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -48,7 +50,7 @@ public class parseJson extends Model {
 
     // Getters
     public String getID() {
-        return photo;
+        return id;
     }
 
     public String getLatitude() {
@@ -58,6 +60,7 @@ public class parseJson extends Model {
     public String getLongitude() {
         return longitude;
     }
+
 
     // Record Finders
     public static parseJson byId(long id) {
@@ -80,6 +83,7 @@ public class parseJson extends Model {
                 continue;
             }
 
+            System.out.println("GEOJSON:  " + geoJson);
             parseJson geo = new parseJson(geoJson);
             geo.save();
             parseArray.add(geo);

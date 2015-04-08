@@ -22,6 +22,8 @@ public class GetRawData {
     private String mData;
     private DownloadStatus mDownloadStatus;
 
+
+
     public GetRawData(String mRawUrl) {
         this.mRawUrl = mRawUrl;
         this.mDownloadStatus = DownloadStatus.IDLE;

@@ -79,12 +79,6 @@ public class TestActivity extends Activity implements OnClickListener{
         Uri pathUri = Uri.parse(picpath);
 
 
-        imgMAT = new Mat();
-        imgMASK = new Mat();
-        imgCANNY = new Mat();
-        ksize = new Size(3, 3);
-
-
         try {
             bitmap = MediaStore.Images.Media.getBitmap(cr, pathUri);
         } catch (IOException e) {

@@ -3,7 +3,6 @@ package androidgraffitiv2.brendan.com.tagd;
 /**
  * Created by Brendan on 4/5/15.
  */
-
 import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
