@@ -362,6 +362,7 @@ public class MainActivity extends FragmentActivity {
         //Endpoint stuff to prototype sharedpref functionality
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         String strSaved = sharedPreferences.getString("id0", "");
+        //int intSaved = sharedPreferences.getInt("id0", 0);
         System.out.println("SAVER:  " + strSaved);
         Toast.makeText(this, strSaved, Toast.LENGTH_LONG).show();
 
