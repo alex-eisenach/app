@@ -58,6 +58,12 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity
+            android:name="androidgraffitiv2.brendan.com.tagd.PhotoView"
+            android:label="@string/photo_view"
+            android:screenOrientation="portrait">
+        </activity>
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBOTbgdCSdrQciYntUbMEOe-rBJn5O9Vqc"/>

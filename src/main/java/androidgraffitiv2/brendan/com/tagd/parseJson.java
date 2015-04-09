@@ -4,7 +4,6 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
-import com.googlecode.flickrjandroid.groups.Category;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +21,7 @@ import java.util.List;
 @Table(name = "Items")
 public class parseJson extends Model {
     // Define table fields
-    @Column(name = "id")
+    @Column(name = "id2")
     String id;
     @Column(name = "latitude")
     String latitude;
@@ -42,7 +41,7 @@ public class parseJson extends Model {
             //this.photo = object.getString("id");
             this.latitude = object.getString("latitude");
             this.longitude = object.getString("longitude");
-            this.id = object.getString("id");
+            id = object.getString("id");
         } catch (JSONException e) {
             e.printStackTrace();
         }

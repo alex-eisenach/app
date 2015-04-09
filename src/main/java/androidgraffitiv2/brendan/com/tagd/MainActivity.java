@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.activeandroid.query.Select;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,7 +29,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.googlecode.flickrjandroid.Transport;
-import com.googlecode.flickrjandroid.photos.GeoData;
 import com.googlecode.flickrjandroid.photos.geo.GeoInterface;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -120,7 +118,7 @@ public class MainActivity extends FragmentActivity {
                 onMapReady(mMap);
 
             } else {
-                //Toast.makeText(this, "Map not available!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Map not available!", Toast.LENGTH_SHORT).show();
             }
 
         } else {
@@ -173,9 +171,9 @@ public class MainActivity extends FragmentActivity {
 
         // Drop some markers
         map.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                .position(new LatLng(40.0274, -105.2519))
-                .title("Hello world"));
+                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                .position(new LatLng(40.0274, -105.2519)));
+                //.title("Hello world"));
 
         // Loop & drop pins like dey hot
         for (int i = 0; i < idData.size(); i++) {
@@ -200,16 +198,18 @@ public class MainActivity extends FragmentActivity {
         }
     };
 
+
+    private void goToPhoto()
+    {
+        Intent switchActivity = new Intent(this, PhotoView.class);
+        //switchActivity.putExtra("selectedImage", currentURL);
+        startActivity(switchActivity);
+    }
+
+
     private OnClickListener galleryListener = new OnClickListener() {
         public void onClick(View v) {
-            Intent gallerySwitcher = new Intent();
-            gallerySwitcher.setType("image/*");
-            gallerySwitcher.setAction(Intent.ACTION_GET_CONTENT);
-            gallerySwitcher.addCategory(Intent.CATEGORY_OPENABLE);
-            File chosenPhoto = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "picture.jpg");
-            chosenImageUri = Uri.fromFile(chosenPhoto);
-            gallerySwitcher.putExtra(MediaStore.EXTRA_OUTPUT, chosenImageUri);
-            startActivityForResult(gallerySwitcher, RES_CODE_SWITCHER);
+            goToPhoto();
         }
     };
 
