@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.activeandroid.query.Select;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.googlecode.flickrjandroid.Transport;
+import com.googlecode.flickrjandroid.photos.GeoData;
 import com.googlecode.flickrjandroid.photos.geo.GeoInterface;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -44,6 +47,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,6 +78,9 @@ public class MainActivity extends FragmentActivity {
     public final static int LAT_TAG = 0;
     public final static int LON_TAG = 1;
     public final static int ID_TAG = 2;
+    public final static int FARM_TAG = 3;
+    public final static int SERVER_TAG = 4;
+    public final static int SECRET_TAG = 5;
 
     private String apiKey = "1ae9506f05e76f22f7e7d89b5277cd75";
     //jsonLint
@@ -118,7 +125,7 @@ public class MainActivity extends FragmentActivity {
                 onMapReady(mMap);
 
             } else {
-                Toast.makeText(this, "Map not available!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Map not available!", Toast.LENGTH_SHORT).show();
             }
 
         } else {
@@ -219,6 +226,30 @@ public class MainActivity extends FragmentActivity {
         imageUri = Uri.fromFile(photo);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         startActivityForResult(intent, TAKE_PICTURE);
+    }
+
+    private void goToTestActivity()
+    {
+        Intent switchActivity = new Intent(this, TestActivity.class);
+
+        authRequest();
+
+        ArrayList<String> serverData = prefHandler(SERVER_TAG);
+        ArrayList<String> idData = prefHandler(ID_TAG);
+        ArrayList<String> farmData = prefHandler(FARM_TAG);
+        ArrayList<String> secretData = prefHandler(SECRET_TAG);
+
+        System.out.println("serverData for DropPins:  " + serverData);
+        System.out.println("farmData for DropPins:  " + farmData);
+        System.out.println("idData for DropPins:  " + idData);
+        System.out.println("secretData for DropPins:  " + secretData);
+
+        String transferImageURL = createSourceUrl(idData.get(0), serverData.get(0), farmData.get(0), secretData.get(0));
+        System.out.println("selectedImage:  " + transferImageURL);
+
+        switchActivity.putExtra("selectedImage", transferImageURL);
+        startActivity(switchActivity);
+
     }
 
     @Override
@@ -343,6 +374,10 @@ public class MainActivity extends FragmentActivity {
                         editor.putString("lat"+String.valueOf(i), geoData.get(i).getLatitude());
                         editor.putString("lon"+String.valueOf(i), geoData.get(i).getLongitude());
                         editor.putString("id"+String.valueOf(i), geoData.get(i).getID());
+                        editor.putString("ser"+String.valueOf(i), geoData.get(i).getServer());
+                        editor.putString("sec"+String.valueOf(i), geoData.get(i).getSecret());
+                        editor.putString("far"+String.valueOf(i), geoData.get(i).getFarm());
+
                     }
 
                     editor.apply();
@@ -361,11 +396,30 @@ public class MainActivity extends FragmentActivity {
 
         //Endpoint stuff to prototype sharedpref functionality
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        String strSaved = sharedPreferences.getString("id0", "");
+        String strSaved = sharedPreferences.getString("far0", "");
         //int intSaved = sharedPreferences.getInt("id0", 0);
         System.out.println("SAVER:  " + strSaved);
         Toast.makeText(this, strSaved, Toast.LENGTH_LONG).show();
 
+    }
+
+    public String createSourceUrl(String id, String server, String farm, String secret)
+    {
+
+        String output = "https://farm" + farm + ".staticflickr.com/" + server + "/" + id + "_" + secret + ".jpg";
+        return output;
+    }
+
+    public static Drawable loadImageFromWeb(String url)
+    {
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+
+            Drawable d = Drawable.createFromStream(is, "src name");
+            return d;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public ArrayList<String> prefHandler(int dataselector) {
@@ -374,6 +428,9 @@ public class MainActivity extends FragmentActivity {
         ArrayList<String> latHolder = new ArrayList<>();
         ArrayList<String> lonHolder = new ArrayList<>();
         ArrayList<String> idHolder = new ArrayList<>();
+        ArrayList<String> serverHolder = new ArrayList<>();
+        ArrayList<String> secretHolder = new ArrayList<>();
+        ArrayList<String> farmHolder = new ArrayList<>();
 
         //sharedpref stuff
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
@@ -385,6 +442,9 @@ public class MainActivity extends FragmentActivity {
             latHolder.add(i, sharedPreferences.getString("lat" + String.valueOf(i), ""));
             lonHolder.add(i, sharedPreferences.getString("lon" + String.valueOf(i), ""));
             idHolder.add(i, sharedPreferences.getString("id" + String.valueOf(i), ""));
+            serverHolder.add(i, sharedPreferences.getString("ser" + String.valueOf(i), ""));
+            secretHolder.add(i, sharedPreferences.getString("sec" + String.valueOf(i), ""));
+            farmHolder.add(i, sharedPreferences.getString("far" + String.valueOf(i), ""));
         }
 
         if (dataselector == LAT_TAG) {
@@ -395,7 +455,19 @@ public class MainActivity extends FragmentActivity {
         }
         if (dataselector == ID_TAG) {
             return idHolder;
-        } else {
+        }
+
+        if (dataselector == SERVER_TAG) {
+            return serverHolder;
+        }
+        if (dataselector == SECRET_TAG) {
+            return secretHolder;
+        }
+        if (dataselector == FARM_TAG) {
+            return farmHolder;
+        }
+
+        else {
             return null;
         }
     }

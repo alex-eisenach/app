@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,18 +13,31 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.UUID;
 
 //added for button functionality
@@ -44,6 +58,8 @@ public class TestActivity extends Activity implements OnClickListener{
     private Context instance;
     private float smallBrush, mediumBrush, largeBrush;
     private ImageButton drawBtn, eraseBtn, newBtn, saveBtn;
+    public ArrayList<parseJson> geoData;
+
 
     //represents the instance on custom
     // view that was added to layout
@@ -88,12 +104,15 @@ public class TestActivity extends Activity implements OnClickListener{
         //ImageView imageView = (ImageView) findViewById(R.id.image_camera);
 
 
-        //imageView.setImageBitmap(bitmap);
+        //drawView.setImageBitmap(bitmap);
         //Toast.makeText(this, pathUri.toString(), Toast.LENGTH_LONG).show();
 
 
 
         picDrawable = new BitmapDrawable(this.getResources(), bitmap);
+        System.out.println("PICPATH:   " + picpath);
+        //picDrawable = loadImageFromWeb(picpath);
+
 
         drawView = (DrawingView)findViewById(R.id.drawing);
 
@@ -163,10 +182,14 @@ public class TestActivity extends Activity implements OnClickListener{
             //write image to a file
             //insertImage method to attempt to write the image to the media
             // store for images on the device, which should save it to the user gallery
-            drawView.setBackground(null);
+            //drawView.setBackground(null);
+            // POST PHOTO TEST CODE
+            authPost(bitmap);
             String imgSaved = MediaStore.Images.Media.insertImage(
                     getContentResolver(), drawView.getDrawingCache(),
                     UUID.randomUUID().toString()+".png", "drawing");
+
+
 
             if(imgSaved!=null){
                 Toast savedToast = Toast.makeText(getApplicationContext(),
@@ -199,6 +222,46 @@ public class TestActivity extends Activity implements OnClickListener{
 
 
         }
+
+    }
+
+    public static Drawable loadImageFromWeb(String url)
+    {
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+            System.out.println("URL Value:  " + url.toString());
+            return Drawable.createFromStream(is, "src name");
+        } catch (Exception e) {
+            System.out.println("INPUTSTREAM ERROR");
+            return null;
+        }
+    }
+
+    public void authPost(Bitmap photo) {
+
+        //File photoObj = new File(filepath);
+
+        RestClient client = RestApplication.getRestClient();
+        client.postPhoto(photo, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            System.out.println("UPLOADRESPONSE");
+                try {
+                    System.out.write(response);
+                } catch (IOException b ) { System.out.println("WeirdError1"); }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                System.out.println("HTTP 4XX Status Error");
+                System.out.println("Status Code:  " + statusCode);
+                try {
+                    System.out.write(errorResponse);
+                } catch (IOException v ) {System.out.println("WeirdError"); }
+            }
+
+        });
+
 
     }
 

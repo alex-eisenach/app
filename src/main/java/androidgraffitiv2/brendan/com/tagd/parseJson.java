@@ -21,12 +21,18 @@ import java.util.List;
 @Table(name = "Items")
 public class parseJson extends Model {
     // Define table fields
-    @Column(name = "id2")
+    @Column(name = "columnid")
     String id;
     @Column(name = "latitude")
     String latitude;
     @Column(name = "longitude")
     String longitude;
+    @Column(name = "farm")
+    String farm;
+    @Column(name = "server")
+    String server;
+    @Column(name = "secret")
+    String secret;
 
     public parseJson() {
         super();
@@ -41,7 +47,11 @@ public class parseJson extends Model {
             //this.photo = object.getString("id");
             this.latitude = object.getString("latitude");
             this.longitude = object.getString("longitude");
-            id = object.getString("id");
+            this.id = object.getString("id");
+            this.farm = object.getString("farm");
+            this.secret = object.getString("secret");
+            this.server = object.getString("server");
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -59,6 +69,12 @@ public class parseJson extends Model {
     public String getLongitude() {
         return longitude;
     }
+
+    public String getFarm() { return farm; }
+
+    public String getServer() { return server; }
+
+    public String getSecret() { return secret; }
 
 
     // Record Finders

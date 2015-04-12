@@ -4,13 +4,21 @@ package androidgraffitiv2.brendan.com.tagd;
  * Created by Brendan on 4/5/15.
  */
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.codepath.oauth.OAuthBaseClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FlickrApi;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /*
  *
@@ -46,6 +54,24 @@ public class RestClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         //params.put("format", "json");
         getClient().get(apiUrl, params, handler);
+    }
+
+    public void postPhoto(Bitmap photo, AsyncHttpResponseHandler handler) {
+
+        //try {
+            //String apiUrl = getApiUrl("https://up.flickr.com/services/upload/");
+            String apiUrl = "https://up.flickr.com/services/upload/";
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            InputStream is = new ByteArrayInputStream(baos.toByteArray());
+            // Can specify query string params directly or through RequestParams.
+            RequestParams params = new RequestParams();
+            //System.out.println("FILEPATH" + photo);
+            params.put("photo", is);
+            getClient().post(apiUrl, params, handler);
+
+        //} catch (FileNotFoundException e) { System.out.println("FileNotFound"); }
     }
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
