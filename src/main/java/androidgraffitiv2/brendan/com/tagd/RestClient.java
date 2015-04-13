@@ -63,7 +63,7 @@ public class RestClient extends OAuthBaseClient {
             String apiUrl = "https://up.flickr.com/services/upload/";
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            photo.compress(Bitmap.CompressFormat.PNG, 5, baos);
             InputStream is = new ByteArrayInputStream(baos.toByteArray());
             // Can specify query string params directly or through RequestParams.
             RequestParams params = new RequestParams();

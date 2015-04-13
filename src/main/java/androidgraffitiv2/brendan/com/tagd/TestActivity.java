@@ -184,7 +184,8 @@ public class TestActivity extends Activity implements OnClickListener{
             // store for images on the device, which should save it to the user gallery
             //drawView.setBackground(null);
             // POST PHOTO TEST CODE
-            authPost(bitmap);
+
+            authPost(drawView.getDrawingCache());
             String imgSaved = MediaStore.Images.Media.insertImage(
                     getContentResolver(), drawView.getDrawingCache(),
                     UUID.randomUUID().toString()+".png", "drawing");

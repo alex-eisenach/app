@@ -29,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.googlecode.flickrjandroid.Transport;
 import com.googlecode.flickrjandroid.photos.GeoData;
@@ -52,7 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements GoogleMap.OnMarkerClickListener{
 
     private static String logtag = "VG2App";
     private static int TAKE_PICTURE = 1;
@@ -71,6 +72,7 @@ public class MainActivity extends FragmentActivity {
     private Float lonFloat;
     private GeoInterface geoInterface;
     public ArrayList<parseJson> geoData;
+    public String sourceURL = "";
 
     public List<String> latArray = new ArrayList<String>();
     public List<String> lonArray = new ArrayList<String>();
@@ -163,6 +165,7 @@ public class MainActivity extends FragmentActivity {
     //adding markers
     public void onMapReady(GoogleMap map) {
 
+        map.setOnMarkerClickListener(this );
         authRequest();
 
         //call prefHandler to grab the data from the Flickr pulldown
@@ -189,13 +192,32 @@ public class MainActivity extends FragmentActivity {
             double lonDouble = Double.valueOf(lonData.get(i));
             double idDouble = Double.valueOf(idData.get(i));
 
-            map.addMarker(new MarkerOptions()
+            Marker marker = map.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
                     .position(new LatLng(latDouble, lonDouble))
-                    .title("ID: " + String.valueOf(idDouble)));
+                    .title(String.valueOf(idDouble)));
+
 
         }
 
+
+    }
+
+    public boolean onMarkerClick(Marker marker) {
+
+        ArrayList<String> idData = prefHandler(ID_TAG);
+        ArrayList<String> farmData = prefHandler(FARM_TAG);
+        ArrayList<String> serverData = prefHandler(SERVER_TAG);
+        ArrayList<String> secretData = prefHandler(SECRET_TAG);
+
+
+        String tracker = marker.getTitle();
+        int index = idData.indexOf(tracker);
+        sourceURL = createSourceUrl(idData.get(index), serverData.get(index), farmData.get(index), secretData.get(index));
+
+        goToPhoto(sourceURL);
+
+        return true;
 
     }
 
@@ -206,17 +228,17 @@ public class MainActivity extends FragmentActivity {
     };
 
 
-    private void goToPhoto()
+    private void goToPhoto(String filepath)
     {
         Intent switchActivity = new Intent(this, PhotoView.class);
-        //switchActivity.putExtra("selectedImage", currentURL);
+        switchActivity.putExtra("selectedImage", filepath);
         startActivity(switchActivity);
     }
 
 
     private OnClickListener galleryListener = new OnClickListener() {
         public void onClick(View v) {
-            goToPhoto();
+            goToPhoto(sourceURL);
         }
     };
 

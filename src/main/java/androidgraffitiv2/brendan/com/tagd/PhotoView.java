@@ -23,8 +23,24 @@ public class PhotoView extends Activity {
 
         imageView = (ImageView) findViewById(R.id.image);
 
+        //All the code here is to retrieve the imageURL from MainActivity
+        Bundle extras = new Bundle();
+        extras = getIntent().getExtras();
+        String picpath = new String();
+        if (savedInstanceState == null) {
+            if (extras == null) {
+                picpath = null;
+            } else {
+                picpath = extras.getString("selectedImage");
+            }
+        }
+        else{
+            picpath = (String) savedInstanceState.getSerializable("selectedImage");
+        }
+        //Done retrieving the URL string, saved to picpath, now loading from Picasso
+
         Picasso.with(this)
-                .load(currentUrl)
+                .load(picpath)
                 .into(imageView, new EmptyCallback() {
                     @Override public void onSuccess() {
                         //progressBar.setVisibility(View.GONE);
@@ -39,7 +55,7 @@ public class PhotoView extends Activity {
                 });
 
         Picasso.with(this)
-                .load(currentUrl);
+                .load(picpath);
                 //.into(target);
 
     }
