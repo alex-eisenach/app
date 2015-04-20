@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -51,6 +54,7 @@ public class TestActivity extends Activity implements OnClickListener{
     private Mat imgCANNY;
     private Size ksize;
     public Bitmap bitmap;
+    public Bitmap bitmap2;
     private Bundle extras;
     private ImageButton currPaint;
     private Canvas picCanvas;
@@ -59,13 +63,12 @@ public class TestActivity extends Activity implements OnClickListener{
     private float smallBrush, mediumBrush, largeBrush;
     private ImageButton drawBtn, eraseBtn, newBtn, saveBtn;
     public ArrayList<parseJson> geoData;
+    public File photoFile;
 
 
     //represents the instance on custom
     // view that was added to layout
     private DrawingView drawView;
-
-    //CHANGE so i can upload
 
 
     @Override
@@ -93,10 +96,12 @@ public class TestActivity extends Activity implements OnClickListener{
         }
 
         Uri pathUri = Uri.parse(picpath);
+        photoFile = new File(pathUri.getPath());
 
 
         try {
             bitmap = MediaStore.Images.Media.getBitmap(cr, pathUri);
+            bitmap2 = BitmapFactory.decodeFile(pathUri.getPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,13 +114,13 @@ public class TestActivity extends Activity implements OnClickListener{
 
 
 
-        picDrawable = new BitmapDrawable(this.getResources(), bitmap);
+        picDrawable = new BitmapDrawable(this.getResources(), bitmap2);
         System.out.println("PICPATH:   " + picpath);
         //picDrawable = loadImageFromWeb(picpath);
 
 
         drawView = (DrawingView)findViewById(R.id.drawing);
-
+        drawView.setBackground(picDrawable);
 
 
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
@@ -124,7 +129,7 @@ public class TestActivity extends Activity implements OnClickListener{
         //show current selected color
         currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
 
-        drawView.setBackground(picDrawable);
+
 
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
@@ -169,7 +174,52 @@ public class TestActivity extends Activity implements OnClickListener{
             saveDialog.setMessage("Save drawing to device Gallery?");
             saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
-                    //save drawing
+
+                    try {
+                        Double latTest = 44.542111;
+                        Double lonTest = -105.062444;
+
+                        LatLng geoDatar = new LatLng(latTest, lonTest);
+                        Boolean bool = setGeoTag(photoFile, geoDatar);
+                        System.out.println("AbsPath:  " + photoFile.getAbsolutePath());
+                        System.out.println("GetPath:  " + photoFile.getPath());
+                        System.out.println("BOOL:  " + bool);
+
+                        ExifInterface exif = new ExifInterface(photoFile.getPath());
+
+                        String exifLat = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        String exifLon = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                        String exifStr = exif.getAttribute(ExifInterface.TAG_MODEL);
+                        String exifSize = exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
+                        String exifLatRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+                        String exifLonRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+                        String exifFocal = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+
+                        System.out.println("EXIFSTR:  " + exifStr);
+                        System.out.println("EXIFLAT:  " + exifLat);
+                        System.out.println("EXIFLON:  " + exifLon);
+                        System.out.println("EXIFSIZE:  " + exifSize);
+                        System.out.println("EXIFLATREF:  " + exifLatRef);
+                        System.out.println("EXIFLONREF:  " + exifLonRef);
+                        System.out.println("EXIFFOCAL:  " + exifFocal);
+
+                    } catch (IOException e) { System.out.println("IO Exception"); }
+
+                    authPost(photoFile);
+                    String imgSaved = MediaStore.Images.Media.insertImage(
+                            getContentResolver(), bitmap2,
+                            UUID.randomUUID().toString()+".jpeg", "drawing");
+
+                    if(imgSaved!=null){
+                        Toast savedToast = Toast.makeText(getApplicationContext(),
+                                "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+                        savedToast.show();
+                    }
+                    else{
+                        Toast unsavedToast = Toast.makeText(getApplicationContext(),
+                                "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
+                        unsavedToast.show();
+                    }
                 }
             });
             saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -178,30 +228,6 @@ public class TestActivity extends Activity implements OnClickListener{
                 }
             });
             saveDialog.show();
-
-            //write image to a file
-            //insertImage method to attempt to write the image to the media
-            // store for images on the device, which should save it to the user gallery
-            //drawView.setBackground(null);
-            // POST PHOTO TEST CODE
-
-            authPost(drawView.getDrawingCache());
-            String imgSaved = MediaStore.Images.Media.insertImage(
-                    getContentResolver(), drawView.getDrawingCache(),
-                    UUID.randomUUID().toString()+".png", "drawing");
-
-
-
-            if(imgSaved!=null){
-                Toast savedToast = Toast.makeText(getApplicationContext(),
-                        "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
-                savedToast.show();
-            }
-            else{
-                Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                        "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
-                unsavedToast.show();
-            }
 
             drawView.destroyDrawingCache();
 
@@ -238,7 +264,7 @@ public class TestActivity extends Activity implements OnClickListener{
         }
     }
 
-    public void authPost(Bitmap photo) {
+    public void authPost(File photo) {
 
         //File photoObj = new File(filepath);
 
@@ -264,6 +290,55 @@ public class TestActivity extends Activity implements OnClickListener{
         });
 
 
+    }
+
+    static public boolean setGeoTag(File image, LatLng geoTag) {
+        if (geoTag != null) {
+            try {
+                ExifInterface exif = new ExifInterface(
+                        image.getAbsolutePath());
+
+                double latitude = Math.abs(geoTag.latitude);
+                double longitude = Math.abs(geoTag.longitude);
+
+                int num1Lat = (int) Math.floor(latitude);
+                int num2Lat = (int) Math.floor((latitude - num1Lat) * 60);
+                double num3Lat = (latitude - ((double) num1Lat + ((double) num2Lat / 60))) * 3600000;
+
+                int num1Lon = (int) Math.floor(longitude);
+                int num2Lon = (int) Math.floor((longitude - num1Lon) * 60);
+                double num3Lon = (longitude - ((double) num1Lon + ((double) num2Lon / 60))) * 3600000;
+
+                String lat = num1Lat + "/1," + num2Lat + "/1," + num3Lat + "/1000";
+                String lon = num1Lon + "/1," + num2Lon + "/1," + num3Lon + "/1000";
+
+                if (geoTag.latitude > 0) {
+                    exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N");
+                } else {
+                    exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "S");
+                }
+
+                if (geoTag.longitude > 0) {
+                    exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E");
+                } else {
+                    exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "W");
+                }
+
+                exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, lat);
+                exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, lon);
+                System.out.println("latlat:  " + lat);
+                System.out.println("lonlon:  " + lon);
+
+                exif.saveAttributes();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -14,6 +14,7 @@
     <string name="cancel">Cancel</string>
     <string name="send">Send</string>
     <string name="new_frame">New Frame</string>
+    <string name="MAP">Map</string>
 
     <string name="start_new">New</string>
     <string name="brush">Brush</string>

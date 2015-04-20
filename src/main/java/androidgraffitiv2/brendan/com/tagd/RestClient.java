@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 /*
@@ -56,19 +57,23 @@ public class RestClient extends OAuthBaseClient {
         getClient().get(apiUrl, params, handler);
     }
 
-    public void postPhoto(Bitmap photo, AsyncHttpResponseHandler handler) {
+    public void postPhoto(File photo, AsyncHttpResponseHandler handler) {
 
         //try {
             //String apiUrl = getApiUrl("https://up.flickr.com/services/upload/");
             String apiUrl = "https://up.flickr.com/services/upload/";
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.PNG, 5, baos);
-            InputStream is = new ByteArrayInputStream(baos.toByteArray());
+            //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            //photo.compress(Bitmap.CompressFormat.PNG, 5, baos);
+
+            //InputStream is = new ByteArrayInputStream(baos.toByteArray());
             // Can specify query string params directly or through RequestParams.
             RequestParams params = new RequestParams();
-            //System.out.println("FILEPATH" + photo);
-            params.put("photo", is);
+            System.out.println("FILEPATH" + photo);
+            try {
+                params.put("photo", photo);
+            } catch (IOException e) {System.out.println("IOERROR");}
+            //params.put("description", "TESTPIC");
             getClient().post(apiUrl, params, handler);
 
         //} catch (FileNotFoundException e) { System.out.println("FileNotFound"); }

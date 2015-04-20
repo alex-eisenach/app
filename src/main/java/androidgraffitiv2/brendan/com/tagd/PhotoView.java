@@ -54,10 +54,6 @@ public class PhotoView extends Activity {
                     }
                 });
 
-        Picasso.with(this)
-                .load(picpath);
-                //.into(target);
-
     }
 
     /*private Target target = new Target() {
