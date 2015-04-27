@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,6 +95,7 @@ public class MainActivity extends Activity {
     private OnClickListener cameraListener = new OnClickListener() {
         public void onClick(View v) {
             takePhoto(v);            //takes in view v
+
         }
     };
 
@@ -124,7 +126,9 @@ public class MainActivity extends Activity {
 
     private void takePhoto(View v) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "picture.jpeg");
+
+        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), UUID.randomUUID().toString()+"_BASE");
+        System.out.println("filepath:  " + photo.getAbsolutePath());
         imageUri = Uri.fromFile(photo);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         startActivityForResult(intent, TAKE_PICTURE);

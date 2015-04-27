@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -31,11 +32,12 @@ import java.util.ArrayList;
  */
 public class SlidePageFragment extends Fragment {
 
-    View rootView;
+    ImageView imageView;
     String imagePath;
     public ArrayList<parseJson> geoData;
     public String sourceURL = "";
-    public static String EXTRA_MESSAGE;
+    public static String EXTRA_MESSAGE = "one";
+    public static String MASK_MESSAGE = "two";
 
     public final static int LAT_TAG = 0;
     public final static int LON_TAG = 1;
@@ -44,10 +46,13 @@ public class SlidePageFragment extends Fragment {
     public final static int SERVER_TAG = 4;
     public final static int SECRET_TAG = 5;
 
-    public static final SlidePageFragment newInstance(String message) {
+    public static final SlidePageFragment newInstance(String message, String maskedmessage) {
         SlidePageFragment f = new SlidePageFragment();
         Bundle bdl = new Bundle(1);
         bdl.putString(EXTRA_MESSAGE, message);
+        bdl.putString(MASK_MESSAGE, maskedmessage);
+        System.out.println("EXTRA_MESSAGE:  " + message);
+        System.out.println("MASK_MESSAGE:  " + maskedmessage);
         f.setArguments(bdl);
         return f;
     }
@@ -65,10 +70,35 @@ public class SlidePageFragment extends Fragment {
 
         //ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_slide, container, false);
         View v = inflater.inflate(R.layout.fragment_slide, container, false);
-        ImageView imageView = (ImageView) v.findViewById(R.id.image);
+        Button swipeButton = (Button) v.findViewById(R.id.button_here);
+        imageView = (ImageView) v.findViewById(R.id.image);
 
-              System.out.println("SOURCEURL:   " + message);
+        System.out.println("SOURCEURL:   " + message);
         Picasso.with(c).load(message).into(imageView);
+
+        swipeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("CLICK!");
+                String maskMessage = getArguments().getString(MASK_MESSAGE);
+                System.out.println("clickmask :" + maskMessage);
+                if (maskMessage != null) {
+                    Context c = getActivity().getApplicationContext();
+                    //ImageView imageView = (ImageView) v.findViewById(R.id.image);
+
+                    Picasso.with(c).load(maskMessage).into(imageView);
+
+                }
+            }
+
+
+        });
+
+
+
+
+
+
         //rootView.addView(v);
 
 
@@ -81,6 +111,11 @@ public class SlidePageFragment extends Fragment {
 
 
         return v;
+    }
+
+    public void setImage(ImageView image, String msg) {
+        Context c = getActivity().getApplicationContext();
+        Picasso.with(c).load(msg).into(image);
     }
 
     public void authRequest() {

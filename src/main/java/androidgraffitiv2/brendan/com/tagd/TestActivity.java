@@ -11,9 +11,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -37,6 +40,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -64,6 +68,7 @@ public class TestActivity extends Activity implements OnClickListener{
     private ImageButton drawBtn, eraseBtn, newBtn, saveBtn;
     public ArrayList<parseJson> geoData;
     public File photoFile;
+    public Uri imageUri;
 
 
     //represents the instance on custom
@@ -118,7 +123,6 @@ public class TestActivity extends Activity implements OnClickListener{
         System.out.println("PICPATH:   " + picpath);
         //picDrawable = loadImageFromWeb(picpath);
 
-
         drawView = (DrawingView)findViewById(R.id.drawing);
         drawView.setBackground(picDrawable);
 
@@ -170,17 +174,44 @@ public class TestActivity extends Activity implements OnClickListener{
         else if(view.getId()==R.id.save_btn){
             //save drawing
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
-            saveDialog.setTitle("Save drawing");
-            saveDialog.setMessage("Save drawing to device Gallery?");
+            saveDialog.setTitle("Upload");
+            saveDialog.setMessage("Push drawing to Flickr?");
             saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
+
+                    File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), photoFile.getName()+"MASK");
+
 
                     try {
                         Double latTest = 44.542111;
                         Double lonTest = -105.062444;
 
-                        LatLng geoDatar = new LatLng(latTest, lonTest);
+                        //LatLng geoDatar = new LatLng(latTest, lonTest);
+                        LatLng geoDatar = getLocation();
                         Boolean bool = setGeoTag(photoFile, geoDatar);
+
+                        //Build File object to save drawing Cache into
+
+                        FileOutputStream out = null;
+                        try {
+                            out = new FileOutputStream(photo);
+                            drawView.getDrawingCache().compress(Bitmap.CompressFormat.JPEG, 30, out);
+                            System.out.println("JPEG Compression complete");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (out != null) {
+                                    out.close();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        Boolean bool2 = setGeoTag(photo, geoDatar);
+
+
                         System.out.println("AbsPath:  " + photoFile.getAbsolutePath());
                         System.out.println("GetPath:  " + photoFile.getPath());
                         System.out.println("BOOL:  " + bool);
@@ -206,9 +237,14 @@ public class TestActivity extends Activity implements OnClickListener{
                     } catch (IOException e) { System.out.println("IO Exception"); }
 
                     authPost(photoFile);
+                    authPost(photo);
+
                     String imgSaved = MediaStore.Images.Media.insertImage(
-                            getContentResolver(), bitmap2,
+                            getContentResolver(), drawView.getDrawingCache(),
                             UUID.randomUUID().toString()+".jpeg", "drawing");
+
+
+
 
                     if(imgSaved!=null){
                         Toast savedToast = Toast.makeText(getApplicationContext(),
@@ -248,6 +284,23 @@ public class TestActivity extends Activity implements OnClickListener{
             currPaint=(ImageButton)view;
 
 
+        }
+
+    }
+
+    public LatLng getLocation() {
+
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        try {
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+            LatLng locdata = new LatLng(latitude, longitude);
+            return locdata;
+        } catch (Exception e) {
+            Toast.makeText(this, "Couldn't get Location", Toast.LENGTH_LONG).show();
+            System.out.println("LocationManager Error");
+            return null;
         }
 
     }

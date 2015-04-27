@@ -33,6 +33,8 @@ public class parseJson extends Model {
     String server;
     @Column(name = "secret")
     String secret;
+    @Column(name = "title")
+    String title;
 
     public parseJson() {
         super();
@@ -51,6 +53,7 @@ public class parseJson extends Model {
             this.farm = object.getString("farm");
             this.secret = object.getString("secret");
             this.server = object.getString("server");
+            this.title = object.getString("title");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -75,6 +78,8 @@ public class parseJson extends Model {
     public String getServer() { return server; }
 
     public String getSecret() { return secret; }
+
+    public String getTitle() { return title; }
 
 
     // Record Finders

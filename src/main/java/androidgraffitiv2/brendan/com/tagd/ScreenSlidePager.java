@@ -38,6 +38,7 @@ public class ScreenSlidePager extends FragmentActivity {
 
     public ArrayList<parseJson> geoData;
     public String sourceURL = "";
+    public String maskURL = "";
 
     public final static int LAT_TAG = 0;
     public final static int LON_TAG = 1;
@@ -45,6 +46,7 @@ public class ScreenSlidePager extends FragmentActivity {
     public final static int FARM_TAG = 3;
     public final static int SERVER_TAG = 4;
     public final static int SECRET_TAG = 5;
+    public final static int TITLE_TAG = 6;
 
 
     @Override
@@ -73,14 +75,46 @@ public class ScreenSlidePager extends FragmentActivity {
         ArrayList<String> farmData = prefHandler(FARM_TAG);
         ArrayList<String> serverData = prefHandler(SERVER_TAG);
         ArrayList<String> secretData = prefHandler(SECRET_TAG);
+        ArrayList<String> titleData = prefHandler(TITLE_TAG);
+
+        System.out.println("titledata = " + titleData);
+        int loopcounter = 0;
 
         for (int i = 0; i < idData.size(); i++) {
 
-            sourceURL = createSourceUrl(idData.get(i), serverData.get(i), farmData.get(i), secretData.get(i));
-            fList.add(SlidePageFragment.newInstance(sourceURL));
+            String parseTitle = titleData.get(i);
+            String[] titleMask = parseTitle.split("_");
+            System.out.println("titleMASK = " + titleMask[1]);
+
+            if (titleMask[1].equals("BASE")) {
+                sourceURL = createSourceUrl(idData.get(i), serverData.get(i), farmData.get(i), secretData.get(i));
+                for (int a = 0; a < idData.size(); a++) {
+                    String[] loopParse = titleData.get(a).split("_");
+                    if (loopParse[0].equals(titleMask[0]) && a != i) {
+                        loopcounter++;
+                        maskURL = createSourceUrl(idData.get(a), serverData.get(a), farmData.get(a), secretData.get(a));
+                        System.out.println("MASKURL:  " + maskURL);
+                        System.out.println("BASEURL:  " + sourceURL);
+                        fList.add(SlidePageFragment.newInstance(sourceURL, maskURL));
+
+                    }
+                }
+            }
+            else if (titleMask[1].equals("BASEMASK")) {
+                continue;
+            }
+
+
+            else {
+
+                System.out.println("MASKURL = NULL");
+            }
+
+            System.out.println("MASKURL:  " + maskURL);
         }
         return fList;
     }
+
 
     public class DepthPageTransformer implements ViewPager.PageTransformer {
         private static final float MIN_SCALE = 0.75f;
@@ -196,6 +230,7 @@ public class ScreenSlidePager extends FragmentActivity {
                         editor.putString("ser"+String.valueOf(i), geoData.get(i).getServer());
                         editor.putString("sec"+String.valueOf(i), geoData.get(i).getSecret());
                         editor.putString("far"+String.valueOf(i), geoData.get(i).getFarm());
+                        editor.putString("tit"+String.valueOf(i), geoData.get(i).getTitle());
 
                     }
 
@@ -238,6 +273,7 @@ public class ScreenSlidePager extends FragmentActivity {
         ArrayList<String> serverHolder = new ArrayList<>();
         ArrayList<String> secretHolder = new ArrayList<>();
         ArrayList<String> farmHolder = new ArrayList<>();
+        ArrayList<String> titleHolder = new ArrayList<>();
 
         //sharedpref stuff
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
@@ -252,6 +288,7 @@ public class ScreenSlidePager extends FragmentActivity {
             serverHolder.add(i, sharedPreferences.getString("ser" + String.valueOf(i), ""));
             secretHolder.add(i, sharedPreferences.getString("sec" + String.valueOf(i), ""));
             farmHolder.add(i, sharedPreferences.getString("far" + String.valueOf(i), ""));
+            titleHolder.add(i, sharedPreferences.getString("tit" + String.valueOf(i), ""));
         }
 
         if (dataselector == LAT_TAG) {
@@ -272,6 +309,10 @@ public class ScreenSlidePager extends FragmentActivity {
         }
         if (dataselector == FARM_TAG) {
             return farmHolder;
+        }
+
+        if (dataselector == TITLE_TAG) {
+            return titleHolder;
         }
 
         else {
