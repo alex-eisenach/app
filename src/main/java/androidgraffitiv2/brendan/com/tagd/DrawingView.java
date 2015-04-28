@@ -31,6 +31,10 @@ public class DrawingView extends View {
 
     }
 
+    public void newLayer(){
+
+    }
+
     private void setupDrawing(){
         //drawing area sets up for interaction
         drawPath = new Path();
@@ -55,6 +59,9 @@ public class DrawingView extends View {
         drawCanvas = new Canvas(canvasBitmap);
 
     }
+
+
+
 
     @Override
     protected  void onDraw(Canvas canvas){

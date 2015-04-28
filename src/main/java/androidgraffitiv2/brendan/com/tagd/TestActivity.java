@@ -250,8 +250,11 @@ public class TestActivity extends Activity implements OnClickListener{
                     // Save Stuff
                     /*
                     String imgSaved = MediaStore.Images.Media.insertImage(
-                            getContentResolver(), bitmap,
+                            getContentResolver(), drawView.getDrawingCache(),
                             UUID.randomUUID().toString()+".jpeg", "drawing");
+
+
+
 
                     if(imgSaved!=null){
                         Toast savedToast = Toast.makeText(getApplicationContext(),

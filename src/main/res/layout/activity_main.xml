@@ -1,26 +1,13 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="@color/background_material_dark">
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
 
 
-
-    <Button
-        android:id="@+id/button_camera"
-        android:text="@string/button_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:background="@color/wallet_holo_blue_light" />
 
     <Button
         android:layout_width="wrap_content"
@@ -29,16 +16,35 @@
         android:id="@+id/map_btn"
         android:clickable="false"
         android:enabled="true"
-        android:layout_gravity="center_horizontal"
-        android:background="@color/primary_material_light" />
+        android:background="@color/primary_material_light"
+        />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Swipe Mode"
+        android:text="Swipe"
         android:id="@+id/swipeButton"
-        android:layout_gravity="center_horizontal"
+        android:layout_toRightOf="@+id/map_btn"
         android:background="@color/background_floating_material_light" />
+
+    <Button
+        android:id="@+id/button_camera"
+        android:text="@string/button_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/wallet_holo_blue_light"
+        android:layout_alignParentRight="true"/>
+
+    <GridView
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/button_camera"/>
+        <!--map:cameraTargetLat="40.0264"
+        map:cameraTargetLng="-105.2519"
+        map:cameraZoom="15"
+        map:uiRotateGestures="false"-->
 
     <!--    <com.google.android.gms.maps.MapView
             android:id="@+id/map"
@@ -47,4 +53,4 @@
 
 
 
-</LinearLayout>
+</RelativeLayout>

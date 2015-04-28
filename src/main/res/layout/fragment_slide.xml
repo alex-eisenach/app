@@ -1,21 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_material_dark">
 
 
     <Button
-        android:id="@+id/button_here"
-        android:text="I'm Here"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="@string/MAP"
+        android:id="@+id/map_btn"
+        android:clickable="false"
+        android:enabled="true"
+        android:background="@color/primary_material_light"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Swipe"
+        android:id="@+id/swipeButton"
+        android:layout_toRightOf="@+id/map_btn"
+        android:background="@color/background_floating_material_light" />
+
+    <Button
+        android:id="@+id/button_camera"
+        android:text="@string/button_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/wallet_holo_blue_light"
+        android:layout_alignParentRight="true"/>
+
 
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/image"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/map_btn">
     </ImageView>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/button_here"
+        android:text="I'm Here"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        />
+
+</RelativeLayout>
+
