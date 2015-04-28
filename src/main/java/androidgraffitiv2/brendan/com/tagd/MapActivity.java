@@ -48,6 +48,8 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
     public final static int FARM_TAG = 3;
     public final static int SERVER_TAG = 4;
     public final static int SECRET_TAG = 5;
+    public final static int TITLE_TAG = 6;
+
 
     private static final int GPS_ERRORDIALOG_REQUEST = 9001;
     GoogleMap mMap;
@@ -113,12 +115,14 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         ArrayList<String> latData = prefHandler(LAT_TAG);
         ArrayList<String> lonData = prefHandler(LON_TAG);
         ArrayList<String> idData = prefHandler(ID_TAG);
+        ArrayList<String> titleData = prefHandler(TITLE_TAG);
 
         //printouts for test
         System.out.println("latData for DropPins:  " + latData);
         System.out.println("lonData for DropPins:  " + lonData);
         System.out.println("idData for DropPins:  " + idData);
 
+        System.out.println("titleData for Drop Pins:  " + titleData);
 
         // Drop some markers
         map.addMarker(new MarkerOptions()
@@ -129,15 +133,25 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         // Loop & drop pins like dey hot
         for (int i = 0; i < idData.size(); i++) {
 
-            double latDouble = Double.valueOf(latData.get(i));
-            double lonDouble = Double.valueOf(lonData.get(i));
-            String idStr = idData.get(i);
-            System.out.println("idSTR:  " + idStr);
+            String[] loopParse = titleData.get(i).split("_");
 
-            Marker marker = map.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                    .position(new LatLng(latDouble, lonDouble))
-                    .title(idStr));
+            if (loopParse[1].equals("BASE")) {
+
+                double latDouble = Double.valueOf(latData.get(i));
+                double lonDouble = Double.valueOf(lonData.get(i));
+                String idStr = idData.get(i);
+                System.out.println("idSTR:  " + idStr);
+
+                Marker marker = map.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                        .position(new LatLng(latDouble, lonDouble))
+                        .title(idStr));
+
+            }
+
+            else { continue; }
+
+
         }
     }
 
@@ -147,6 +161,7 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         ArrayList<String> farmData = prefHandler(FARM_TAG);
         ArrayList<String> serverData = prefHandler(SERVER_TAG);
         ArrayList<String> secretData = prefHandler(SECRET_TAG);
+        ArrayList<String> titleData = prefHandler(TITLE_TAG);
 
 
         String tracker = marker.getTitle();
@@ -228,7 +243,7 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
                     System.out.println("tobObj raw printout:  " + topObj);
                     System.out.println("photoArray raw printout:  " + photoArray);
                     System.out.println("photoArray printout:  " + photoArray.getJSONObject(1));
-                    System.out.println("photoArray latitutde printout:  " + photoArray.getJSONObject(1).getString("latitude"));
+                    System.out.println("photoArray title printout:  " + photoArray.getJSONObject(1).getString("title"));
                     System.out.println("photoArray Length:  " + photoArray.length());
 
                     //Build the geoData object
@@ -249,6 +264,7 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
                         editor.putString("ser"+String.valueOf(i), geoData.get(i).getServer());
                         editor.putString("sec"+String.valueOf(i), geoData.get(i).getSecret());
                         editor.putString("far"+String.valueOf(i), geoData.get(i).getFarm());
+                        editor.putString("tit"+String.valueOf(i), geoData.get(i).getTitle());
 
                     }
 
@@ -266,12 +282,6 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
 
         });
 
-        //Endpoint stuff to prototype sharedpref functionality
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        String strSaved = sharedPreferences.getString("far0", "");
-        //int intSaved = sharedPreferences.getInt("id0", 0);
-        System.out.println("SAVER:  " + strSaved);
-        Toast.makeText(this, strSaved, Toast.LENGTH_LONG).show();
 
     }
 
@@ -291,9 +301,11 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         ArrayList<String> serverHolder = new ArrayList<>();
         ArrayList<String> secretHolder = new ArrayList<>();
         ArrayList<String> farmHolder = new ArrayList<>();
+        ArrayList<String> titleHolder = new ArrayList<>();
 
         //sharedpref stuff
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        System.out.println("TEST" + sharedPreferences.getString("tit" + String.valueOf(0),""));
         //retrieve the number of pictures coming in for data
         int numPics = sharedPreferences.getInt("arrayLength", 0);
         //loop to store the sharedpref stuff into array
@@ -305,6 +317,7 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
             serverHolder.add(i, sharedPreferences.getString("ser" + String.valueOf(i), ""));
             secretHolder.add(i, sharedPreferences.getString("sec" + String.valueOf(i), ""));
             farmHolder.add(i, sharedPreferences.getString("far" + String.valueOf(i), ""));
+            titleHolder.add(i, sharedPreferences.getString("tit" + String.valueOf(i), ""));
         }
 
         if (dataselector == LAT_TAG) {
@@ -325,6 +338,10 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         }
         if (dataselector == FARM_TAG) {
             return farmHolder;
+        }
+        if (dataselector == TITLE_TAG) {
+            System.out.println("titleHolder:   " + titleHolder);
+            return titleHolder;
         }
 
         else {

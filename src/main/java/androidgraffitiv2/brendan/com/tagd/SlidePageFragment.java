@@ -46,6 +46,7 @@ public class SlidePageFragment extends Fragment {
     public final static int SERVER_TAG = 4;
     public final static int SECRET_TAG = 5;
 
+
     public static final SlidePageFragment newInstance(String message, String maskedmessage) {
         SlidePageFragment f = new SlidePageFragment();
         Bundle bdl = new Bundle(1);

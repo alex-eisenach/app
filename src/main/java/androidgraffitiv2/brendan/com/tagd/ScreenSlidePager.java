@@ -67,6 +67,7 @@ public class ScreenSlidePager extends FragmentActivity {
 
     }
 
+
     private List<Fragment> getFragments() {
         List<Fragment> fList = new ArrayList<Fragment>();
 

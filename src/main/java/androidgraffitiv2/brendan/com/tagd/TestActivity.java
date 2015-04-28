@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -188,6 +189,7 @@ public class TestActivity extends Activity implements OnClickListener{
 
                         //LatLng geoDatar = new LatLng(latTest, lonTest);
                         LatLng geoDatar = getLocation();
+                        System.out.println("geoDatar:   " + geoDatar.toString());
                         Boolean bool = setGeoTag(photoFile, geoDatar);
 
                         //Build File object to save drawing Cache into
@@ -239,12 +241,17 @@ public class TestActivity extends Activity implements OnClickListener{
                     authPost(photoFile);
                     authPost(photo);
 
+                    Toast saveToast = Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_SHORT);
+                    saveToast.show();
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+
+                    // Save Stuff
+                    /*
                     String imgSaved = MediaStore.Images.Media.insertImage(
-                            getContentResolver(), drawView.getDrawingCache(),
+                            getContentResolver(), bitmap,
                             UUID.randomUUID().toString()+".jpeg", "drawing");
-
-
-
 
                     if(imgSaved!=null){
                         Toast savedToast = Toast.makeText(getApplicationContext(),
@@ -256,6 +263,7 @@ public class TestActivity extends Activity implements OnClickListener{
                                 "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
                         unsavedToast.show();
                     }
+                    */
                 }
             });
             saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
