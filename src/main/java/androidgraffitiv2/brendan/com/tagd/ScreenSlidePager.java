@@ -195,8 +195,6 @@ public class ScreenSlidePager extends FragmentActivity {
         return Uri.parse(path);
     }
 
-
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();

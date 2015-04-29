@@ -78,13 +78,17 @@ public class MainActivity extends Activity {
         Button cameraButton = (Button) findViewById(R.id.button_camera);
         Button mapButton = (Button) findViewById(R.id.map_btn);
         Button swipeButton = (Button) findViewById(R.id.swipeButton);
+
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
         mapButton.setOnClickListener(mapListener);
         swipeButton.setOnClickListener(swipeListener);
+        //gridButton.setOnClickListener(gridListener);
 
         //function here to build URLarray
-        URLarray = buildURLArray();
+        ArrayList<String> URLtemp = new ArrayList<>();
+        URLarray = buildURLArray(URLtemp);
+
         System.out.println("URLarray:  " + URLarray);
 
         GridView gv = (GridView) findViewById(R.id.grid_view);
@@ -93,23 +97,44 @@ public class MainActivity extends Activity {
 
     }
 
-    public ArrayList<String> buildURLArray() {
+    public ArrayList<String> buildURLArray(ArrayList<String> urlList) {
 
-        //URLarray.clear();
         authRequest();
 
         ArrayList<String> idData = prefHandler(ID_TAG);
         ArrayList<String> farmData = prefHandler(FARM_TAG);
         ArrayList<String> serverData = prefHandler(SERVER_TAG);
         ArrayList<String> secretData = prefHandler(SECRET_TAG);
+        ArrayList<String> titleData = prefHandler(TITLE_TAG);
+
+        System.out.println("titledata = " + titleData);
+
 
         for (int i = 0; i < idData.size(); i++) {
 
-            URLarray.add(i, createSourceUrl(idData.get(i), serverData.get(i), farmData.get(i), secretData.get(i)));
+            String parseTitle = titleData.get(i);
+            String[] titleMask = parseTitle.split("_");
+            //System.out.println("titleMASK = " + titleMask[1]);
+
+            if (titleMask[1].equals("BASE")) {
+                String tempURL = createSourceUrl(idData.get(i), serverData.get(i), farmData.get(i), secretData.get(i));
+                urlList.add(tempURL);
+            }
+            else if (titleMask[1].equals("BASEMASK")) {
+                continue;
+            }
+
+
+            else {
+
+                System.out.println("MASKURL = NULL");
+            }
+
+            //System.out.println("MASKURL:  " + maskURL);
 
         }
 
-        return URLarray;
+        return urlList;
 
     }
 
@@ -154,12 +179,12 @@ public class MainActivity extends Activity {
                         editor.putString("ser"+String.valueOf(i), geoData.get(i).getServer());
                         editor.putString("sec"+String.valueOf(i), geoData.get(i).getSecret());
                         editor.putString("far"+String.valueOf(i), geoData.get(i).getFarm());
-
+                        editor.putString("tit"+String.valueOf(i), geoData.get(i).getTitle());
                     }
 
                     editor.apply();
 
-                    System.out.println("geoData:  " + geoData.get(1).getID());
+                    System.out.println("geoData:  " + geoData.get(1).getTitle());
 
 
                 } catch (JSONException j) {
@@ -173,7 +198,7 @@ public class MainActivity extends Activity {
 
         //Endpoint stuff to prototype sharedpref functionality
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        String strSaved = sharedPreferences.getString("far0", "");
+        String strSaved = sharedPreferences.getString("tit0", "");
         //int intSaved = sharedPreferences.getInt("id0", 0);
         System.out.println("SAVER:  " + strSaved);
         Toast.makeText(this, strSaved, Toast.LENGTH_LONG).show();
@@ -196,6 +221,7 @@ public class MainActivity extends Activity {
         ArrayList<String> serverHolder = new ArrayList<>();
         ArrayList<String> secretHolder = new ArrayList<>();
         ArrayList<String> farmHolder = new ArrayList<>();
+        ArrayList<String> titleHolder = new ArrayList<>();
 
         //sharedpref stuff
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
@@ -210,6 +236,7 @@ public class MainActivity extends Activity {
             serverHolder.add(i, sharedPreferences.getString("ser" + String.valueOf(i), ""));
             secretHolder.add(i, sharedPreferences.getString("sec" + String.valueOf(i), ""));
             farmHolder.add(i, sharedPreferences.getString("far" + String.valueOf(i), ""));
+            titleHolder.add(i, sharedPreferences.getString("tit" + String.valueOf(i), ""));
         }
 
         if (dataselector == LAT_TAG) {
@@ -230,6 +257,9 @@ public class MainActivity extends Activity {
         }
         if (dataselector == FARM_TAG) {
             return farmHolder;
+        }
+        if (dataselector == TITLE_TAG) {
+            return titleHolder;
         }
 
         else {

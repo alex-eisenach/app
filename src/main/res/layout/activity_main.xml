@@ -7,7 +7,12 @@
     android:background="@color/background_material_dark">
 
 
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Grid"
+        android:id="@+id/gridButton"
+        android:background="@color/background_floating_material_light" />
 
     <Button
         android:layout_width="wrap_content"
@@ -16,6 +21,7 @@
         android:id="@+id/map_btn"
         android:clickable="false"
         android:enabled="true"
+        android:layout_toRightOf="@+id/gridButton"
         android:background="@color/primary_material_light"
         />
 
@@ -26,6 +32,7 @@
         android:id="@+id/swipeButton"
         android:layout_toRightOf="@+id/map_btn"
         android:background="@color/background_floating_material_light" />
+
 
     <Button
         android:id="@+id/button_camera"

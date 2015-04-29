@@ -54,6 +54,7 @@ final class GridViewAdapter extends BaseAdapter {
         if (view == null) {
             view = new SquaredImageView(context);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            //view.setLayoutParams(new GridView.LayoutParams(100, 100));
         }
 
         // Get the image URL for the current position.
