@@ -2,6 +2,7 @@ package androidgraffitiv2.brendan.com.tagd;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -82,6 +83,11 @@ public class TestActivity extends Activity implements OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
+        // DrawingView stuff
+        smallBrush = getResources().getInteger(R.integer.small_size);
+        mediumBrush = getResources().getInteger(R.integer.medium_size);
+        largeBrush = getResources().getInteger(R.integer.large_size);
+
         TestActivity actinstance = new TestActivity();
 
         Bundle extras = new Bundle();
@@ -126,21 +132,28 @@ public class TestActivity extends Activity implements OnClickListener{
 
         drawView = (DrawingView)findViewById(R.id.drawing);
         drawView.setBackground(picDrawable);
+        drawView.setBrushSize(mediumBrush);
 
 
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
         //get first button and store it as instance variable
         currPaint = (ImageButton)paintLayout.getChildAt(0);
+        drawBtn = (ImageButton)findViewById(R.id.draw_btn);
+        drawBtn.setOnClickListener(this);
+
+        eraseBtn = (ImageButton)findViewById(R.id.erase_btn);
+        eraseBtn.setOnClickListener(this);
         //show current selected color
         currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
-
-
 
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
 
+        newBtn = (ImageButton)findViewById(R.id.new_btn);
+        newBtn.setOnClickListener(this);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -169,10 +182,85 @@ public class TestActivity extends Activity implements OnClickListener{
         //respond to clicks
         drawView.setDrawingCacheEnabled(true);
         if(view.getId()==R.id.draw_btn){
-            //draw button clicked
+
+            final Dialog brushDialog = new Dialog(this);
+            brushDialog.setTitle("Brush size:");
+            brushDialog.setContentView(R.layout.brush_chooser);
+            ImageButton smallBtn = (ImageButton) brushDialog.findViewById(R.id.small_brush);
+            smallBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawView.setErase(false);
+                    drawView.setBrushSize(smallBrush);
+                    drawView.setLastBrushSize(smallBrush);
+                    brushDialog.dismiss();
+                }
+            });
+
+            ImageButton mediumBtn = (ImageButton) brushDialog.findViewById(R.id.medium_brush);
+            mediumBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawView.setErase(false);
+                    drawView.setBrushSize(mediumBrush);
+                    drawView.setLastBrushSize(mediumBrush);
+                    brushDialog.dismiss();
+                }
+            });
+
+            ImageButton largeBtn = (ImageButton) brushDialog.findViewById(R.id.large_brush);
+            largeBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawView.setErase(false);
+                    drawView.setBrushSize(largeBrush);
+                    drawView.setLastBrushSize(largeBrush);
+                    brushDialog.dismiss();
+                }
+            });
+
+            brushDialog.show();
         }
 
-        else if(view.getId()==R.id.save_btn){
+            else if(view.getId()==R.id.erase_btn) {
+
+                final Dialog brushDialog = new Dialog(this);
+                brushDialog.setTitle("Eraser size:");
+                brushDialog.setContentView(R.layout.brush_chooser);
+
+            ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+            smallBtn.setOnClickListener(new OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    drawView.setErase(true);
+                    drawView.setBrushSize(smallBrush);
+                    brushDialog.dismiss();
+                }
+            });
+            ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+            mediumBtn.setOnClickListener(new OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    drawView.setErase(true);
+                    drawView.setBrushSize(mediumBrush);
+                    brushDialog.dismiss();
+                }
+            });
+            ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
+            largeBtn.setOnClickListener(new OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    drawView.setErase(true);
+                    drawView.setBrushSize(largeBrush);
+                    brushDialog.dismiss();
+                }
+            });
+
+            brushDialog.show();
+
+        }
+
+            else if(view.getId()==R.id.save_btn){
             //save drawing
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
             saveDialog.setTitle("Upload");
@@ -279,10 +367,31 @@ public class TestActivity extends Activity implements OnClickListener{
             drawView.destroyDrawingCache();
 
         }
+
+        else if(view.getId()==R.id.new_btn) {
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            newDialog.setTitle("New drawing");
+            newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
+            newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    drawView.startNew();
+                    dialog.dismiss();
+                }
+            });
+            newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.cancel();
+                }
+            });
+            newDialog.show();
+        }
     }
 
     public void paintClicked(View view){
         //use chosen color
+        drawView.setErase(false);
+        drawView.setBrushSize(drawView.getLastBrushSize());
+
         if(view!=currPaint){
             //update color
             ImageButton imgView = (ImageButton)view;
