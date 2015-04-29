@@ -37,6 +37,7 @@ final class GridViewAdapter extends BaseAdapter {
     public GridViewAdapter(Context context, ArrayList<String> urls) {
         this.context = context;
         this.urls = urls;
+        //this.items = items;
 
         // Ensure we get a different ordering of images on each run.
         //Collections.addAll(urls, Data.);
@@ -59,6 +60,7 @@ final class GridViewAdapter extends BaseAdapter {
 
         // Get the image URL for the current position.
         String url = getItem(position);
+        //Button button = (Button) convertView.findViewById(R.id.grid_view);
 
         // Trigger the download of the URL asynchronously into the image view.
         Picasso.with(context) //

@@ -78,10 +78,13 @@ public class ScreenSlidePager extends FragmentActivity {
         Button cameraButton = (Button) findViewById(R.id.button_camera);
         Button mapButton = (Button) findViewById(R.id.map_btn);
         Button swipeButton = (Button) findViewById(R.id.swipeButton);
+        Button gridButton = (Button) findViewById(R.id.gridButton);
+
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
         mapButton.setOnClickListener(mapListener);
         swipeButton.setOnClickListener(swipeListener);
+        gridButton.setOnClickListener(gridListener);
 
     }
 
@@ -102,6 +105,17 @@ public class ScreenSlidePager extends FragmentActivity {
             goToSwipe();
         }
     };
+
+    private  View.OnClickListener gridListener = new View.OnClickListener(){
+        public void onClick(View v) {
+            goToGrid();
+        }
+    };
+
+    private void goToGrid(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 
     private void goToSwipe() {
         Intent intent = new Intent(this, ScreenSlidePager.class);

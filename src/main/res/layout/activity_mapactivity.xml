@@ -5,13 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="@color/background_material_dark">
-
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+    android:background="@color/background_material_light">
 
     <Button
         android:layout_width="wrap_content"
@@ -28,7 +22,7 @@
         android:clickable="false"
         android:enabled="true"
         android:layout_toRightOf="@+id/gridButton"
-        android:background="@color/primary_material_light"
+        android:background="@color/background_floating_material_light"
         />
 
     <Button

@@ -78,12 +78,13 @@ public class MainActivity extends Activity {
         Button cameraButton = (Button) findViewById(R.id.button_camera);
         Button mapButton = (Button) findViewById(R.id.map_btn);
         Button swipeButton = (Button) findViewById(R.id.swipeButton);
+        Button gridButton = (Button) findViewById(R.id.gridButton);
 
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
         mapButton.setOnClickListener(mapListener);
         swipeButton.setOnClickListener(swipeListener);
-        //gridButton.setOnClickListener(gridListener);
+        gridButton.setOnClickListener(gridListener);
 
         //function here to build URLarray
         ArrayList<String> URLtemp = new ArrayList<>();
@@ -96,6 +97,49 @@ public class MainActivity extends Activity {
         gv.setOnScrollListener(new ScrollListener(this));
 
     }
+
+
+    /*public void setOnClickListener (OnClickListener l) {
+
+        ArrayList<String> idData = prefHandler(ID_TAG);
+        ArrayList<String> farmData = prefHandler(FARM_TAG);
+        ArrayList<String> serverData = prefHandler(SERVER_TAG);
+        ArrayList<String> secretData = prefHandler(SECRET_TAG);
+        ArrayList<String> titleData = prefHandler(TITLE_TAG);
+
+        String tracker = marker.getTitle();
+        int index = 0;
+        for (int a = 0; a<idData.size(); a++) {
+            if (idData.get(a).equals(tracker)) {
+                index = a;
+                break;
+            } else {
+                index = -1;
+            }
+        }
+
+        System.out.println("INDEX:  " + index);
+        System.out.println("TRACKER: " + tracker);
+        System.out.println("IDDATA:  " + idData.get(index));
+
+        sourceURL = createSourceUrl(idData.get(index), serverData.get(index), farmData.get(index), secretData.get(index));
+
+        goToPhoto(sourceURL);
+
+        return true;
+
+    }*/
+
+
+
+    private void goToPhoto(String filepath)
+    {
+        Intent switchActivity = new Intent(this, PhotoView.class);
+        switchActivity.putExtra("selectedImage", filepath);
+        startActivity(switchActivity);
+    }
+
+
 
     public ArrayList<String> buildURLArray(ArrayList<String> urlList) {
 
@@ -285,6 +329,17 @@ public class MainActivity extends Activity {
             goToSwipe();
         }
     };
+
+    private OnClickListener gridListener = new OnClickListener() {
+        public void onClick(View v) {
+            goToGrid();
+        }
+    };
+
+    private void goToGrid(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 
     private void goToSwipe() {
         Intent intent = new Intent(this, ScreenSlidePager.class);

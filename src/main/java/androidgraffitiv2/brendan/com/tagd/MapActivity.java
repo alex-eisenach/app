@@ -1,17 +1,22 @@
 package androidgraffitiv2.brendan.com.tagd;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,7 +35,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 /**
@@ -41,6 +51,13 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
 
     public ArrayList<parseJson> geoData;
     public String sourceURL = "";
+
+    private static int TAKE_PICTURE = 1;
+    public Uri imageUri;
+    private String str;
+    private Bitmap bitmap;
+
+    static final int RES_CODE_SWITCHER = 99;
 
     public final static int LAT_TAG = 0;
     public final static int LON_TAG = 1;
@@ -59,6 +76,16 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mapactivity);
 
+        Button cameraButton = (Button) findViewById(R.id.button_camera);
+        Button mapButton = (Button) findViewById(R.id.map_btn);
+        Button swipeButton = (Button) findViewById(R.id.swipeButton);
+        Button gridButton = (Button) findViewById(R.id.gridButton);
+
+        //on click listener
+        cameraButton.setOnClickListener(cameraListener);
+        mapButton.setOnClickListener(mapListener);
+        swipeButton.setOnClickListener(swipeListener);
+        gridButton.setOnClickListener(gridListener);
 
         if (servicesOK()) {
 
@@ -78,6 +105,112 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         }
 
     }
+
+    private View.OnClickListener cameraListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            takePhoto(v);            //takes in view v
+        }
+    };
+
+    private View.OnClickListener mapListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            goToMap();
+        }
+    };
+
+    private View.OnClickListener swipeListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            goToSwipe();
+        }
+    };
+
+    private View.OnClickListener gridListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            goToGrid();
+        }
+    };
+
+    private void goToGrid(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    private void goToSwipe() {
+        Intent intent = new Intent(this, ScreenSlidePager.class);
+        intent.putExtra("numpics", "10");
+        startActivity(intent);
+
+    }
+
+    private void goToMap() {
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+
+    }
+
+
+
+
+    private void takePhoto(View v) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), UUID.randomUUID().toString()+"_BASE");
+        System.out.println("filepath:  " + photo.getAbsolutePath());
+        imageUri = Uri.fromFile(photo);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, TAKE_PICTURE);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        //make sure user hit OK button
+        if (resultCode == Activity.RESULT_OK && requestCode == TAKE_PICTURE) {
+
+            str = imageUri.toString();
+
+            Intent switchActivity = new Intent(this, TestActivity.class);
+            switchActivity.putExtra("selectedImage", str);
+            startActivity(switchActivity);
+
+        }
+
+        if (requestCode == RES_CODE_SWITCHER && resultCode == Activity.RESULT_OK) {
+
+            try {
+                if (bitmap != null) {
+                    bitmap.recycle();
+                }
+
+                InputStream stream = getContentResolver().openInputStream(intent.getData());
+                bitmap = BitmapFactory.decodeStream(stream);
+                stream.close();
+                Uri chosenImage = getImageUri(this, bitmap);
+                str = chosenImage.toString();
+                getContentResolver().notifyChange(chosenImage, null);
+
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+
+            } catch (IOException err) {
+                err.printStackTrace();
+            }
+
+            Intent switchActivity = new Intent(this, TestActivity.class);
+            switchActivity.putExtra("selectedImage", str);
+            startActivity(switchActivity);
+
+
+            super.onActivityResult(requestCode, resultCode, intent);
+
+
+        }
+
+    }
+
 
     //Testing Google Play Services for map
     public boolean servicesOK() {
@@ -162,7 +295,6 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         ArrayList<String> serverData = prefHandler(SERVER_TAG);
         ArrayList<String> secretData = prefHandler(SECRET_TAG);
         ArrayList<String> titleData = prefHandler(TITLE_TAG);
-
 
         String tracker = marker.getTitle();
         int index = 0;
