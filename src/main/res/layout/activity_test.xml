@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFCCCCCC"
+    android:background="@color/background_material_light"
     android:orientation="vertical"
     tools:context="androidgraffitiv2.brendan.com.tagd.TestActivity">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:contentDescription="@string/brush"
+            android:layout_toRightOf="@+id/new_btn"
             android:src="@drawable/brush" />
 
         <ImageButton
@@ -32,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:contentDescription="@string/erase"
+            android:layout_toRightOf="@+id/draw_btn"
             android:src="@drawable/eraser"/>
 
 
@@ -40,12 +42,11 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:contentDescription="@string/save"
+            android:layout_toRightOf="@+id/erase_btn"
             android:src="@drawable/save"/>
 
 
-
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <androidgraffitiv2.brendan.com.tagd.DrawingView
         android:id="@+id/drawing"
