@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -46,7 +47,7 @@ final class GridViewAdapter extends BaseAdapter {
         // Triple up the list.
         ArrayList<String> copy = new ArrayList<String>(urls);
         urls.addAll(copy);
-        urls.addAll(copy);
+        //urls.addAll(copy);
     }
 
     @Override
@@ -55,7 +56,7 @@ final class GridViewAdapter extends BaseAdapter {
         if (view == null) {
             view = new SquaredImageView(context);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            //view.setLayoutParams(new GridView.LayoutParams(100, 100));
+            //view.setLayoutParams(new GridView.LayoutParams(100,100));
         }
 
         // Get the image URL for the current position.

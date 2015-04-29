@@ -11,26 +11,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Grid"
-        android:id="@+id/gridButton"
+        android:id="@+id/gridButtonMAP"
         android:background="@color/background_floating_material_light" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/MAP"
-        android:id="@+id/map_btn"
+        android:id="@+id/map_btnMAP"
         android:clickable="false"
         android:enabled="true"
-        android:layout_toRightOf="@+id/gridButton"
-        android:background="@color/background_floating_material_light"
+        android:layout_toRightOf="@+id/gridButtonMAP"
+        android:background="@drawable/button_border"
         />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Swipe"
-        android:id="@+id/swipeButton"
-        android:layout_toRightOf="@+id/map_btn"
+        android:id="@+id/swipeButtonMAP"
+        android:layout_toRightOf="@+id/map_btnMAP"
         android:background="@color/background_floating_material_light" />
 
 

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,7 +21,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -76,9 +80,9 @@ public class ScreenSlidePager extends FragmentActivity {
         mPager.setAdapter(mPagerAdapter);
 
         Button cameraButton = (Button) findViewById(R.id.button_camera);
-        Button mapButton = (Button) findViewById(R.id.map_btn);
-        Button swipeButton = (Button) findViewById(R.id.swipeButton);
-        Button gridButton = (Button) findViewById(R.id.gridButton);
+        Button mapButton = (Button) findViewById(R.id.map_btnSWIPE);
+        Button swipeButton = (Button) findViewById(R.id.swipeButtonSWIPE);
+        Button gridButton = (Button) findViewById(R.id.gridButtonSWIPE);
 
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
@@ -224,6 +228,8 @@ public class ScreenSlidePager extends FragmentActivity {
         ArrayList<String> farmData = prefHandler(FARM_TAG);
         ArrayList<String> serverData = prefHandler(SERVER_TAG);
         ArrayList<String> secretData = prefHandler(SECRET_TAG);
+        ArrayList<String> latData = prefHandler(LAT_TAG);
+        ArrayList<String> lonData = prefHandler(LON_TAG);
         ArrayList<String> titleData = prefHandler(TITLE_TAG);
 
         System.out.println("titledata = " + titleData);
@@ -244,7 +250,10 @@ public class ScreenSlidePager extends FragmentActivity {
                         maskURL = createSourceUrl(idData.get(a), serverData.get(a), farmData.get(a), secretData.get(a));
                         System.out.println("MASKURL:  " + maskURL);
                         System.out.println("BASEURL:  " + sourceURL);
-                        fList.add(SlidePageFragment.newInstance(sourceURL, maskURL));
+
+                        LatLng fragLoc = getLocation();
+
+                        fList.add(SlidePageFragment.newInstance(sourceURL, maskURL, fragLoc, latData.get(i), lonData.get(i)));
 
                     }
                 }
@@ -264,6 +273,22 @@ public class ScreenSlidePager extends FragmentActivity {
         return fList;
     }
 
+    public LatLng getLocation() {
+
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        try {
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+            LatLng locdata = new LatLng(latitude, longitude);
+            return locdata;
+        } catch (Exception e) {
+            Toast.makeText(this, "Couldn't get Location", Toast.LENGTH_LONG).show();
+            System.out.println("LocationManager Error");
+            return null;
+        }
+
+    }
 
     public class DepthPageTransformer implements ViewPager.PageTransformer {
         private static final float MIN_SCALE = 0.75f;

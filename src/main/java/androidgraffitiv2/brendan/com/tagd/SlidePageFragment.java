@@ -2,6 +2,8 @@ package androidgraffitiv2.brendan.com.tagd;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
@@ -32,6 +36,10 @@ public class SlidePageFragment extends Fragment {
     public String sourceURL = "";
     public static String EXTRA_MESSAGE = "one";
     public static String MASK_MESSAGE = "two";
+    public static String LAT_MESSAGE = "three";
+    public static String LON_MESSAGE = "four";
+    public static String LAT_CURRENT = "five";
+    public static String LON_CURRENT = "six";
 
     public final static int LAT_TAG = 0;
     public final static int LON_TAG = 1;
@@ -41,13 +49,21 @@ public class SlidePageFragment extends Fragment {
     public final static int SECRET_TAG = 5;
 
 
-    public static final SlidePageFragment newInstance(String message, String maskedmessage) {
+    public static final SlidePageFragment newInstance(String message, String maskedmessage, LatLng currentLoc, String photoLat, String photoLon) {
         SlidePageFragment f = new SlidePageFragment();
         Bundle bdl = new Bundle(1);
         bdl.putString(EXTRA_MESSAGE, message);
         bdl.putString(MASK_MESSAGE, maskedmessage);
+        bdl.putString(LAT_CURRENT, String.valueOf(currentLoc.latitude));
+        bdl.putString(LON_CURRENT, String.valueOf(currentLoc.longitude));
+        bdl.putString(LAT_MESSAGE, photoLat);
+        bdl.putString(LON_MESSAGE, photoLon);
+
         System.out.println("EXTRA_MESSAGE:  " + message);
         System.out.println("MASK_MESSAGE:  " + maskedmessage);
+        System.out.println("LAT_MESSAGE:  " + String.valueOf(currentLoc.latitude));
+        System.out.println("LON_MESSAGE:  " + String.valueOf(currentLoc.longitude));
+
         f.setArguments(bdl);
         return f;
     }
@@ -72,13 +88,41 @@ public class SlidePageFragment extends Fragment {
             public void onClick(View v) {
                 System.out.println("CLICK!");
                 String maskMessage = getArguments().getString(MASK_MESSAGE);
+                String latMessage = getArguments().getString(LAT_MESSAGE);
+                String lonMessage = getArguments().getString(LON_MESSAGE);
+                String latCurrent = getArguments().getString(LAT_CURRENT);
+                String lonCurrent = getArguments().getString(LON_CURRENT);
+
                 System.out.println("clickmask :" + maskMessage);
+                System.out.println("latlons:  " + latMessage + "  " + latCurrent);
                 if (maskMessage != null) {
                     Context c = getActivity().getApplicationContext();
                     //ImageView imageView = (ImageView) v.findViewById(R.id.image);
 
-                    Picasso.with(c).load(maskMessage).into(imageView);
+                    try {
+                        Location currentLoc = new Location(LocationManager.GPS_PROVIDER);
+                        Location picLoc = new Location(LocationManager.GPS_PROVIDER);
 
+                        currentLoc.setLatitude(Double.valueOf(latCurrent));
+                        currentLoc.setLongitude(Double.valueOf(lonCurrent));
+
+                        picLoc.setLatitude(Double.valueOf(latMessage));
+                        picLoc.setLongitude(Double.valueOf(lonMessage));
+
+                        Float dist = currentLoc.distanceTo(picLoc);
+                        System.out.println("DIST:  " + dist);
+
+                        if (dist < 10) {
+
+                            Picasso.with(c).load(maskMessage).into(imageView);
+
+                        }
+
+                        if (dist > 10) {
+
+                            Toast.makeText(getActivity(), "You aren't close enough!", Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) { System.out.println("TRY AND CATCH"); }
                 }
             }
 
@@ -101,6 +145,8 @@ public class SlidePageFragment extends Fragment {
         Context c = getActivity().getApplicationContext();
         Picasso.with(c).load(msg).into(image);
     }
+
+
 
     public void authRequest() {
         RestClient client = RestApplication.getRestClient();

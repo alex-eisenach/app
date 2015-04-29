@@ -76,9 +76,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         Button cameraButton = (Button) findViewById(R.id.button_camera);
-        Button mapButton = (Button) findViewById(R.id.map_btn);
-        Button swipeButton = (Button) findViewById(R.id.swipeButton);
-        Button gridButton = (Button) findViewById(R.id.gridButton);
+        Button mapButton = (Button) findViewById(R.id.map_btnGRID);
+        Button swipeButton = (Button) findViewById(R.id.swipeButtonGRID);
+        Button gridButton = (Button) findViewById(R.id.gridButtonGRID);
 
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
@@ -241,11 +241,11 @@ public class MainActivity extends Activity {
         });
 
         //Endpoint stuff to prototype sharedpref functionality
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        String strSaved = sharedPreferences.getString("tit0", "");
+        //SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        //String strSaved = sharedPreferences.getString("tit0", "");
         //int intSaved = sharedPreferences.getInt("id0", 0);
-        System.out.println("SAVER:  " + strSaved);
-        Toast.makeText(this, strSaved, Toast.LENGTH_LONG).show();
+        //System.out.println("SAVER:  " + strSaved);
+        //Toast.makeText(this, strSaved, Toast.LENGTH_LONG).show();
 
     }
 

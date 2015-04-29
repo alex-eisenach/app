@@ -14,12 +14,22 @@
 
     <Button
         android:id="@+id/button_here"
-        android:text="I'm Here"
+        android:text="Show TAGD"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        />
+        android:alpha="0.75"
+        android:background="@color/wallet_holo_blue_light"
+        android:singleLine="false"
+        android:elegantTextHeight="true"
+        android:paddingStart="@dimen/abc_action_bar_default_padding_material"
+        android:clickable="true"
+        android:paddingEnd="@dimen/abc_action_bar_default_padding_material"
+        android:paddingLeft="12dp"
+        android:paddingTop="4dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="2dp" />
 
 
 </RelativeLayout>

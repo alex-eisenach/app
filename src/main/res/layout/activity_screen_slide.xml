@@ -9,17 +9,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Grid"
-        android:id="@+id/gridButton"
+        android:id="@+id/gridButtonSWIPE"
         android:background="@color/background_floating_material_light" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/MAP"
-        android:id="@+id/map_btn"
+        android:id="@+id/map_btnSWIPE"
         android:clickable="false"
         android:enabled="true"
-        android:layout_toRightOf="@+id/gridButton"
+        android:layout_toRightOf="@+id/gridButtonSWIPE"
         android:background="@color/background_floating_material_light"
         />
 
@@ -27,9 +27,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Swipe"
-        android:id="@+id/swipeButton"
-        android:layout_toRightOf="@+id/map_btn"
-        android:background="@color/background_floating_material_light" />
+        android:id="@+id/swipeButtonSWIPE"
+        android:layout_toRightOf="@+id/map_btnSWIPE"
+        android:background="@drawable/button_border" />
 
     <Button
         android:id="@+id/button_camera"
@@ -43,7 +43,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/map_btn"
+        android:layout_below="@+id/map_btnSWIPE"
         android:id="@+id/pager"
         android:layout_alignParentBottom="true" />
 

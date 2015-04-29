@@ -11,17 +11,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Grid"
-        android:id="@+id/gridButton"
-        android:background="@color/background_floating_material_light" />
+        android:id="@+id/gridButtonGRID"
+        android:background="@drawable/button_border" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/MAP"
-        android:id="@+id/map_btn"
+        android:id="@+id/map_btnGRID"
         android:clickable="false"
         android:enabled="true"
-        android:layout_toRightOf="@+id/gridButton"
+        android:layout_toRightOf="@+id/gridButtonGRID"
         android:background="@color/background_floating_material_light"
         />
 
@@ -29,8 +29,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Swipe"
-        android:id="@+id/swipeButton"
-        android:layout_toRightOf="@+id/map_btn"
+        android:id="@+id/swipeButtonGRID"
+        android:layout_toRightOf="@+id/map_btnGRID"
         android:background="@color/background_floating_material_light" />
 
 
@@ -47,7 +47,14 @@
         android:id="@+id/grid_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/button_camera"/>
+        android:layout_below="@+id/button_camera"
+        android:columnWidth="120dp"
+        android:numColumns="3"
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="0dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        />
         <!--map:cameraTargetLat="40.0264"
         map:cameraTargetLng="-105.2519"
         map:cameraZoom="15"

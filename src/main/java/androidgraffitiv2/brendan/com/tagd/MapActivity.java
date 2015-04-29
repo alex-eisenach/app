@@ -77,9 +77,9 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         setContentView(R.layout.activity_mapactivity);
 
         Button cameraButton = (Button) findViewById(R.id.button_camera);
-        Button mapButton = (Button) findViewById(R.id.map_btn);
-        Button swipeButton = (Button) findViewById(R.id.swipeButton);
-        Button gridButton = (Button) findViewById(R.id.gridButton);
+        Button mapButton = (Button) findViewById(R.id.map_btnMAP);
+        Button swipeButton = (Button) findViewById(R.id.swipeButtonMAP);
+        Button gridButton = (Button) findViewById(R.id.gridButtonMAP);
 
         //on click listener
         cameraButton.setOnClickListener(cameraListener);
