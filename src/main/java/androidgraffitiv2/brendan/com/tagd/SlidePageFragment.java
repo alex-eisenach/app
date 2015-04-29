@@ -112,13 +112,13 @@ public class SlidePageFragment extends Fragment {
                         Float dist = currentLoc.distanceTo(picLoc);
                         System.out.println("DIST:  " + dist);
 
-                        if (dist < 10) {
+                        if (dist < 1000) {
 
                             Picasso.with(c).load(maskMessage).into(imageView);
 
                         }
 
-                        if (dist > 10) {
+                        if (dist > 1000) {
 
                             Toast.makeText(getActivity(), "You aren't close enough!", Toast.LENGTH_LONG).show();
                         }

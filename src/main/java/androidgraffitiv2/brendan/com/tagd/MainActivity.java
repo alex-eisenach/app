@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.googlecode.flickrjandroid.Transport;
@@ -92,9 +91,19 @@ public class MainActivity extends Activity {
 
         System.out.println("URLarray:  " + URLarray);
 
+
         GridView gv = (GridView) findViewById(R.id.grid_view);
         gv.setAdapter(new GridViewAdapter(this, URLarray));
         gv.setOnScrollListener(new ScrollListener(this));
+
+
+       /* gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+
+            }
+        });*/
+
 
     }
 

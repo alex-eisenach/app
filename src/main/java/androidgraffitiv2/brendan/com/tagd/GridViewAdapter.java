@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -61,7 +60,6 @@ final class GridViewAdapter extends BaseAdapter {
 
         // Get the image URL for the current position.
         String url = getItem(position);
-        //Button button = (Button) convertView.findViewById(R.id.grid_view);
 
         // Trigger the download of the URL asynchronously into the image view.
         Picasso.with(context) //

@@ -258,9 +258,9 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerC
         System.out.println("titleData for Drop Pins:  " + titleData);
 
         // Drop some markers
-        map.addMarker(new MarkerOptions()
+        /*map.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                .position(new LatLng(40.0274, -105.2519)));
+                .position(new LatLng(40.0274, -105.2519)));*/
         //.title("Hello world"));
 
         // Loop & drop pins like dey hot
